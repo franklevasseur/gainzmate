@@ -1,22 +1,33 @@
 {
   "name": "gainzmate",
   "scripts": {
-    "type:check": "tsc --noEmit"
+    "type:check": "pnpm -r --stream type:check",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint:check": "eslint ./ --ext .ts --ext .tsx",
+    "lint:fix": "eslint --fix ./ --ext .ts --ext .tsx",
+    "check": "pnpm format:check && pnpm lint:check && pnpm type:check",
+    "fix": "pnpm format:fix && pnpm lint:fix"
   },
   "keywords": [],
   "private": true,
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "@botpress/client": "0.5.2",
-    "@botpress/sdk": "0.4.8",
-    "@bpinternal/entities": "^0.0.3",
-    "@microsoft/recognizers-text-suite": "^1.3.1",
-    "zod": "^3.20.6"
-  },
   "devDependencies": {
-    "@types/node": "^18.11.17",
+    "@botpress/cli": "^0.4.8",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsdoc": "^39.6.4",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
-  }
+    "typescript": "^4.9.4",
+    "vitest": "^0.33.0"
+  },
+  "packageManager": "pnpm@8.6.0+"
 }

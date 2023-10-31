@@ -15,14 +15,11 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedParameters": true,
     "target": "es2017",
-    "baseUrl": ".",
-    "outDir": "dist",
     "checkJs": false,
     "incremental": true,
     "exactOptionalPropertyTypes": false,
     "resolveJsonModule": true,
     "noPropertyAccessFromIndexSignature": false,
     "noUnusedLocals": false
-  },
-  "include": [".botpress/**/*", "src/**/*", "./*.ts", "./*.json"]
+  }
 }

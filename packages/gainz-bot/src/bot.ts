@@ -1,5 +1,5 @@
-import * as bp from '.botpress'
 import { z } from 'zod'
+import * as bp from '.botpress'
 
 const flowStateSchema = z.object({
   nextNode: z.string().optional(),

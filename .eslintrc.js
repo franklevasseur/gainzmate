@@ -122,11 +122,8 @@ module.exports = {
     'object-shorthand': 'error',
     'prefer-const': 'warn',
     'no-unused-vars': 'off',
-    'unused-imports/no-unused-imports': 'error',
-    'unused-imports/no-unused-vars': [
-      'error',
-      { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
-    ],
+    'unused-imports/no-unused-imports': 'off',
+    'unused-imports/no-unused-vars': 'off'
   },
   parser: '@typescript-eslint/parser',
 }

@@ -1,7 +1,7 @@
-import { MessageHandler } from 'src/bot'
+import { ApiUtils } from '../api-utils'
+import { MessageHandler } from '../bot'
 import { newCmd } from './new'
 import * as types from './types'
-import { ApiUtils } from 'src/api-utils'
 
 export * from './types'
 
