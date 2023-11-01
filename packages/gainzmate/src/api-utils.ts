@@ -14,4 +14,17 @@ export class ApiUtils {
       },
     })
   }
+
+  public async choice(text: string, choices: string[]): Promise<void> {
+    await this.props.client.createMessage({
+      conversationId: this.props.message.conversationId,
+      userId: this.props.ctx.botId,
+      tags: {},
+      type: 'choice',
+      payload: {
+        text,
+        options: choices.map((choice) => ({ label: choice, value: choice })),
+      },
+    })
+  }
 }
