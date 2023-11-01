@@ -1,0 +1,14 @@
+{
+  "name": "dallox",
+  "description": "DalloX is a simple framework to build botpress bots as code with dialog features",
+  "scripts": {
+    "type:check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "private": true,
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.20.6"
+  }
+}

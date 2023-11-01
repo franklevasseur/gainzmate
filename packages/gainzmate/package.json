@@ -1,5 +1,5 @@
 {
-  "name": "gainz-bot",
+  "name": "gainzmate",
   "scripts": {
     "type:check": "tsc --noEmit"
   },

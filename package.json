@@ -1,5 +1,5 @@
 {
-  "name": "gainzmate",
+  "name": "gainzville",
   "scripts": {
     "type:check": "pnpm -r --stream type:check",
     "format:check": "prettier --check .",
