@@ -1,30 +1,24 @@
 import { MessageHandlerProps } from './bot'
+import * as bp from '.botpress'
 
-export class ApiUtils {
-  public constructor(private readonly props: MessageHandlerProps) {}
+type Messages = bp.telegram.channels.channel.Messages
 
-  public async respond(text: string) {
+export class Api {
+  private constructor(private readonly props: MessageHandlerProps) {}
+
+  public static from = (props: MessageHandlerProps) => new Api(props)
+
+  public async respond<T extends keyof Messages>(type: T, payload: Messages[T]) {
     await this.props.client.createMessage({
       conversationId: this.props.message.conversationId,
       userId: this.props.ctx.botId,
       tags: {},
-      type: 'text',
-      payload: {
-        text,
-      },
+      type,
+      payload,
     })
   }
 
-  public async choice(text: string, choices: string[]): Promise<void> {
-    await this.props.client.createMessage({
-      conversationId: this.props.message.conversationId,
-      userId: this.props.ctx.botId,
-      tags: {},
-      type: 'choice',
-      payload: {
-        text,
-        options: choices.map((choice) => ({ label: choice, value: choice })),
-      },
-    })
+  public async respondText(text: string) {
+    await this.respond('text', { text })
   }
 }
