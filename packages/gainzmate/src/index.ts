@@ -2,82 +2,53 @@ import * as dallox from 'dallox'
 import { bot } from './bot'
 import { z } from 'zod'
 import { Api } from './api-utils'
+import { stateRepo } from './state'
 
-const flow = new dallox.Flow(bot, {
-  get: async (props) =>
-    props.client
-      .getState({ name: 'flow', type: 'conversation', id: props.message.conversationId })
-      .then(({ state }) => state.payload)
-      .catch(() => null),
-  set: async (props, state) =>
-    props.client
-      .setState({
-        name: 'flow',
-        type: 'conversation',
-        id: props.message.conversationId,
-        payload: state,
-      })
-      .then(() => {}),
+const flow = new dallox.Flow(bot, stateRepo)
+
+const entryNode = flow.declare(z.object({}))
+flow.execute(entryNode, async () => flow.transition(sayHiNode, { emoji: '👋' }))
+
+const sayHiNode = flow.declare(
+  z.object({ name: z.string().optional(), emoji: z.union([z.literal('👋'), z.literal('😎')]) })
+)
+flow.execute(sayHiNode, async (props) => {
+  const msg = props.data.name ?? 'man'
+  Api.from(props).respondText(`Hi, ${msg} ${props.data.emoji}!`)
+  return flow.transition(promptNameNode, {})
 })
 
-const entryNode = flow.execute({
-  input: z.object({}),
-  handler: async () => {
-    return {
-      transition: 'hold',
-      next: sayHiNode,
-      data: {},
-    }
-  },
-})
-
-const sayHiNode = flow.execute({
-  input: z.object({ name: z.string().optional() }),
-  handler: async (props) => {
-    const msg = props.data.name ?? 'man'
-    Api.from(props).respondText(`Hi, ${msg}!`)
-    return {
-      transition: 'hold',
-      next: promptNameNode,
-      data: {},
-    }
-  },
-})
-
-// self referencing node -> any
-const promptNameNode: any = flow.prompt({
-  question: {
+const promptNameNode = flow.declare(z.object({}))
+flow.prompt(
+  promptNameNode,
+  {
     type: 'text',
     payload: {
       text: 'What is your name?',
     },
   },
-  input: z.object({}),
-  handler: async (props) => {
+  async (props) => {
     const text = props.message.payload.text as string
 
-    if (!text) {
-      Api.from(props).respondText('Please enter your name')
-      return {
-        transition: 'hold',
-        next: promptNameNode,
-        data: {},
-      }
+    const isAlpha = /^[a-zA-Z]+$/.test(text)
+    if (!isAlpha) {
+      Api.from(props).respondText('This is not a valid name. Please try again.')
+      return flow.transition(promptNameNode, {})
     }
 
-    return {
-      transition: 'hold',
-      next: sayHiNode,
-      data: { name: text },
-    }
-  },
-})
+    return flow.transition(sayHiNode, { name: text, emoji: '😎' })
+  }
+)
 
 bot.message(async (props) => {
   console.info('[START] process_message', props.message)
 
-  const handler = flow.start(entryNode, {})
-  await handler(props)
+  if (props.message.payload.text === '/reset') {
+    await stateRepo.set(props, { next: entryNode.id, data: {} })
+  } else {
+    const handler = flow.start(entryNode, {})
+    await handler(props)
+  }
 
   console.info('[END] process_message')
 })

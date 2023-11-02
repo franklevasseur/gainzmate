@@ -12,33 +12,27 @@ type NodeInput<TBot extends Bot, TInput extends z.AnyZodObject> = MessageHandler
 }
 
 type NodeTransition = 'hold' | 'yield'
-type NodeOutput<TBot extends Bot, TNext extends Node<TBot, any>> = {
-  transition: NodeTransition
-  next: TNext
-  data: z.infer<TNext['input']>
-} | null
+type NodeOutput<TBot extends Bot, TNext extends NodeReference<TBot, any>> = FlowTransition<TBot, TNext> | null
 
-type NodeHandler<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends Node<TBot, any>> = (
+type NodeHandler<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends NodeReference<TBot, any>> = (
   props: NodeInput<TBot, TInput>
 ) => Promise<NodeOutput<TBot, TNext>>
 
-class Node<TBot extends Bot, TInput extends z.AnyZodObject> {
+class NodeReference<_TBot extends Bot, TInput extends z.AnyZodObject> {
+  public constructor(public readonly id: number, public readonly input: TInput) {}
+}
+
+type Node<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends NodeReference<TBot, any>> = {
+  ref: NodeReference<TBot, any>
+  handler: NodeHandler<TBot, TInput, TNext>
+}
+
+class FlowTransition<TBot extends Bot, TNext extends NodeReference<TBot, any>> {
   public constructor(
-    public readonly id: number,
-    public readonly input: TInput,
-    public readonly handler: NodeHandler<TBot, TInput, Node<TBot, any>>
+    public readonly transition: NodeTransition,
+    public readonly next: TNext,
+    public readonly data: z.infer<TNext['input']>
   ) {}
-}
-
-type ExecuteNodeProps<TBot extends Bot, TInput extends z.AnyZodObject> = {
-  input: TInput
-  handler: NodeHandler<TBot, TInput, Node<TBot, any>>
-}
-
-type PromptNodeProps<TBot extends Bot, TInput extends z.AnyZodObject> = {
-  input: TInput
-  question: Pick<CreateMessageProps<TBot>, 'type' | 'payload'>
-  handler: NodeHandler<TBot, TInput, Node<TBot, any>>
 }
 
 export type FlowState = {
@@ -52,45 +46,71 @@ export type FlowStateRepository<TBot extends Bot> = {
 }
 
 export class Flow<TBot extends Bot> {
-  private _nodes: Node<TBot, any>[] = []
+  private _nodes: Node<TBot, any, any>[] = []
   public constructor(private _bot: TBot, private _stateRepo: FlowStateRepository<TBot>) {}
 
+  public readonly transition = <TNext extends NodeReference<TBot, any>>(ref: TNext, data: z.infer<TNext['input']>) =>
+    new FlowTransition('hold', ref, data)
+
+  public readonly yield = <TNext extends NodeReference<TBot, any>>(ref: TNext, data: z.infer<TNext['input']>) =>
+    new FlowTransition('yield', ref, data)
+
+  public readonly declare = <TInput extends z.AnyZodObject>(input: TInput) => {
+    const ref = new NodeReference(this._nodes.length, input)
+    const defaultHandler: NodeHandler<TBot, TInput, NodeReference<TBot, any>> = async () => {
+      throw new err.NodeNotImplementedError(ref.id)
+    }
+    this._nodes.push({ ref, handler: defaultHandler })
+    return ref
+  }
+
   public readonly execute = <TInput extends z.AnyZodObject>(
-    props: ExecuteNodeProps<TBot, TInput>
-  ): Node<TBot, TInput> => {
-    const node = new Node(this._nodes.length, props.input, props.handler)
-    this._nodes.push(node)
-    return node
+    ref: NodeReference<TBot, TInput>,
+    handler: NodeHandler<TBot, TInput, NodeReference<TBot, any>>
+  ) => {
+    const node = this._nodes[ref.id]
+    if (!node) {
+      throw new err.NodeNotFoundError(ref.id)
+    }
+    node.handler = handler
   }
 
   public readonly prompt = <TInput extends z.AnyZodObject>(
-    props: PromptNodeProps<TBot, TInput>
-  ): Node<TBot, TInput> => {
-    const promptNode = new Node(this._nodes.length, props.input, async (args) => {
+    ref: NodeReference<TBot, TInput>,
+    question: Pick<CreateMessageProps<TBot>, 'type' | 'payload'>,
+    handler: NodeHandler<TBot, TInput, NodeReference<TBot, any>>
+  ) => {
+    const questionNode = this._nodes[ref.id]
+    if (!questionNode) {
+      throw new err.NodeNotFoundError(ref.id)
+    }
+    questionNode.handler = async (args) => {
       await args.client.createMessage({
         conversationId: args.message.conversationId,
-        userId: args.message.userId,
+        userId: args.ctx.botId,
         tags: {},
-        type: props.question.type,
-        payload: props.question.payload,
+        type: question.type,
+        payload: question.payload,
       })
       return {
         transition: 'yield',
-        next: validationNode,
+        next: validationNodeRef,
         data: args.data,
       }
+    }
+
+    const validationNodeRef = new NodeReference(this._nodes.length, ref.input)
+    this._nodes.push({
+      ref: validationNodeRef,
+      handler,
     })
-
-    const validationNode = new Node(this._nodes.length, props.input, props.handler)
-
-    this._nodes.push(promptNode)
-    this._nodes.push(validationNode)
-
-    return promptNode
   }
 
   public readonly start =
-    <TInput extends z.AnyZodObject>(startNode: Node<TBot, TInput>, startData: z.infer<TInput>): MessageHandler<TBot> =>
+    <TInput extends z.AnyZodObject>(
+      startNode: NodeReference<TBot, TInput>,
+      startData: z.infer<TInput>
+    ): MessageHandler<TBot> =>
     async (props) => {
       const initialState: FlowState = { next: startNode.id, data: startData }
       let state: FlowState = (await this._stateRepo.get(props)) ?? initialState
@@ -114,8 +134,8 @@ export class Flow<TBot extends Bot> {
           return
         }
 
-        if (output.next.id === node.id) {
-          throw new err.InfiniteLoopError(node.id)
+        if (output.next.id === node.ref.id) {
+          throw new err.InfiniteLoopError(node.ref.id)
         }
 
         await this._stateRepo.set(props, state)

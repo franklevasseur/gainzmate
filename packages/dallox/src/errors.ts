@@ -16,3 +16,9 @@ export class InvalidStateDataError extends FlowError {
     super(`Cannot transition to node "${nodeId}" with invalid data: ${error.toString()}`)
   }
 }
+
+export class NodeNotImplementedError extends FlowError {
+  public constructor(public readonly nodeId: number) {
+    super(`Node "${nodeId}" is not implemented`)
+  }
+}

@@ -1,13 +1,6 @@
 import { z } from 'zod'
 import * as bp from '.botpress'
 
-const flowStateSchema = z.object({
-  next: z.number(),
-  data: z.object({}).passthrough(),
-})
-
-export type FlowState = z.infer<typeof flowStateSchema>
-
 export const bot = new bp.Bot({
   integrations: {
     telegram: new bp.telegram.Telegram({
@@ -20,7 +13,10 @@ export const bot = new bp.Bot({
   states: {
     flow: {
       type: 'conversation',
-      schema: flowStateSchema,
+      schema: z.object({
+        next: z.number(),
+        data: z.object({}).passthrough(),
+      }),
     },
   },
 })
