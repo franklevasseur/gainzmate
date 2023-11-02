@@ -95,6 +95,17 @@ export const implementations = {
     }
   },
   prompt_name_question: async (props) => {
+    if (props.data.name) {
+      return {
+        transition: 'hold',
+        next: 'prompt_side_question',
+        data: {
+          ...props.data,
+          name: props.data.name,
+        },
+      }
+    }
+
     const api = new ApiUtils(props)
     await api.choice('What lift did you do?', ['pronation', 'riser'])
     return {
@@ -135,6 +146,17 @@ export const implementations = {
     }
   },
   prompt_side_question: async (props) => {
+    if (props.data.side) {
+      return {
+        transition: 'hold',
+        next: 'prompt_weight_question',
+        data: {
+          ...props.data,
+          side: props.data.side,
+        },
+      }
+    }
+
     const api = new ApiUtils(props)
     await api.choice('What side did you do?', ['left', 'right'])
     return {
@@ -182,6 +204,17 @@ export const implementations = {
     }
   },
   prompt_weight_question: async (props) => {
+    if (props.data.weight) {
+      return {
+        transition: 'hold',
+        next: 'prompt_reps_question',
+        data: {
+          ...props.data,
+          weight: props.data.weight,
+        },
+      }
+    }
+
     const api = new ApiUtils(props)
     await api.respond('How much weight did you do?')
     return {
@@ -231,6 +264,17 @@ export const implementations = {
     }
   },
   prompt_reps_question: async (props) => {
+    if (props.data.reps) {
+      return {
+        transition: 'hold',
+        next: 'prompt_notes_question',
+        data: {
+          ...props.data,
+          reps: props.data.reps,
+        },
+      }
+    }
+
     const api = new ApiUtils(props)
     await api.respond('How many reps did you do?')
     return {
@@ -280,6 +324,10 @@ export const implementations = {
     }
   },
   prompt_notes_question: async (props) => {
+    if (props.data.notes) {
+      return null
+    }
+
     const api = new ApiUtils(props)
     await api.respond('Any notes?')
     return {
@@ -294,31 +342,6 @@ export const implementations = {
     const api = new ApiUtils(props)
     const { message } = props
     const notes = message.payload.text as string
-
-    if (!notes) {
-      await api.respond('Please enter some notes.')
-      return {
-        transition: 'hold',
-        next: 'prompt_notes_question',
-        data: {
-          ...props.data,
-        },
-      }
-    }
-
-    const parseResult = liftNotes.safeParse(notes)
-
-    if (!parseResult.success) {
-      await api.respond('Please enter valid notes.')
-      return {
-        transition: 'hold',
-        next: 'prompt_notes_question',
-        data: {
-          ...props.data,
-        },
-      }
-    }
-
     return null
   },
 } satisfies dallox.FlowImplementation<Bot, typeof definitions>

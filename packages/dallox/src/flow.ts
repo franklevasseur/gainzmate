@@ -39,6 +39,8 @@ export class Flow<TBot extends SdkBot, TFlowDef extends types.FlowDefinition> {
         if (transition === 'yield') {
           return state
         }
+
+        // TODO: also persist the state when the transition is 'hold' in case the bot crashes
       }
     }
 }
