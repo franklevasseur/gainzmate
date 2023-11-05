@@ -22,3 +22,15 @@ export class NodeNotImplementedError extends FlowError {
     super(`Node "${nodeId}" is not implemented`)
   }
 }
+
+export class NodeAlreadyImplementedError extends FlowError {
+  public constructor(public readonly nodeId: number) {
+    super(`Node "${nodeId}" is already implemented`)
+  }
+}
+
+export class NoStartNodeDefined extends FlowError {
+  public constructor() {
+    super(`No start node defined`)
+  }
+}
