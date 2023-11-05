@@ -8,6 +8,7 @@ export type Client<TBot extends Bot> = MessageHandlerProps<TBot>['client']
 export type CreateMessageProps<TBot extends Bot> = Parameters<Client<TBot>['createMessage']>[0]
 
 export type NodeDeclaration<_TBot extends Bot, TInput extends z.AnyZodObject> = {
+  id: string
   schema: TInput
 }
 
@@ -29,7 +30,7 @@ export type NodeHandler<TBot extends Bot, TInput extends z.AnyZodObject, TNext e
 ) => Promise<NodeOutput<TBot, TNext>>
 
 export type FlowState = {
-  next: number
+  next: string
   data: object
 }
 
@@ -37,3 +38,6 @@ export type FlowStateRepository<TBot extends Bot> = {
   get: (props: MessageHandlerProps<TBot>) => Promise<FlowState | null>
   set: (props: MessageHandlerProps<TBot>, state: FlowState) => Promise<void>
 }
+
+export type AnyNode<TBot extends Bot> = Node<TBot, any, any>
+export type NodeMap<TBot extends Bot> = Record<string, AnyNode<TBot>>

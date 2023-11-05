@@ -6,7 +6,7 @@ import * as types from './types'
 
 export class Flow<TBot extends Bot> {
   private _initialState: types.FlowState | null = null
-  private _nodes: Node<TBot, any, any>[] = []
+  private _nodes: types.NodeMap<TBot> = {}
 
   public constructor(_bot: TBot, private _stateRepo: types.FlowStateRepository<TBot>) {}
 
@@ -21,10 +21,9 @@ export class Flow<TBot extends Bot> {
   ): types.FlowTransition<TBot, TNext> => ({ action: 'yield', next, data })
 
   public readonly declareNode = <TInput extends z.AnyZodObject>(declaration: types.NodeDeclaration<TBot, TInput>) => {
-    const id = this._nodes.length
-    const ref = new Node(id, declaration.schema, this._nodes)
-    this._nodes[id] = ref
-    return ref
+    const node = new Node(declaration.id, declaration.schema, this._nodes)
+    this._nodes[declaration.id] = node
+    return node
   }
 
   public readonly setStart = <TInput extends z.AnyZodObject>(
@@ -38,7 +37,7 @@ export class Flow<TBot extends Bot> {
     if (!this._initialState) {
       throw new err.NoStartNodeDefined()
     }
-    await this._stateRepo.set(props, { next: 0, data: {} })
+    await this._stateRepo.set(props, this._initialState)
   }
 
   public readonly handler: types.MessageHandler<TBot> = async (props) => {
