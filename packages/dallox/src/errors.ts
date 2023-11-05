@@ -31,7 +31,13 @@ export class NodeAlreadyImplementedError extends FlowError {
 
 export class NoStartNodeDefined extends FlowError {
   public constructor() {
-    super(`No start node defined`)
+    super(`Start node is undefined`)
+  }
+}
+
+export class StartNodeConflict extends FlowError {
+  public constructor() {
+    super(`Start node is already defined`)
   }
 }
 

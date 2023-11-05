@@ -1,7 +1,6 @@
-import * as nodes from './nodes'
-import { bot, flow } from './bot'
+import { bot } from './bot'
+import { flow } from './flow'
 
-flow.setStart(nodes.entryNode, {})
 bot.message(async (props) => {
   console.info('[START] process_message', props.message)
 

@@ -1,10 +1,6 @@
-import { flow } from './bot'
+import { flow } from '.'
 import { z } from 'zod'
-import { Api } from './api-utils'
-
-export const entryNode = flow
-  .declareNode({ id: 'entry', schema: z.object({}) })
-  .execute(async () => flow.transition(sayHiNode, { emoji: '👋' }))
+import { Api } from '../api-utils'
 
 export const sayHiNode = flow
   .declareNode({

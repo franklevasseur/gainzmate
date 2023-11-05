@@ -4,9 +4,19 @@ import { Node } from './node'
 import * as err from './errors'
 import * as types from './types'
 
+const emptySchema = z.object({})
+type ZodEmptySchema = typeof emptySchema
+
 export class Flow<TBot extends Bot> {
-  private _initialState: types.FlowState | null = null
+  private _startNode: Node<TBot, ZodEmptySchema, any> | null = null
   private _nodes: types.NodeMap<TBot> = {}
+
+  private get _initialState(): types.FlowState {
+    if (!this._startNode) {
+      throw new err.NoStartNodeDefined()
+    }
+    return { next: this._startNode.id, data: {} }
+  }
 
   public constructor(_bot: TBot, private _stateRepo: types.FlowStateRepository<TBot>) {}
 
@@ -20,28 +30,32 @@ export class Flow<TBot extends Bot> {
     data: z.infer<TNext['input']>
   ): types.FlowTransition<TBot, TNext> => ({ action: 'yield', next, data })
 
+  public readonly start = () => {
+    if (this._startNode) {
+      throw new err.StartNodeConflict()
+    }
+    const startId = '▁▁start▁▁'
+    const node = new Node(startId, emptySchema, this._nodes)
+    this._startNode = node
+    this._nodes[startId] = node
+    return node
+  }
+
   public readonly declareNode = <TInput extends z.AnyZodObject>(declaration: types.NodeDeclaration<TBot, TInput>) => {
     const node = new Node(declaration.id, declaration.schema, this._nodes)
     this._nodes[declaration.id] = node
     return node
   }
 
-  public readonly setStart = <TInput extends z.AnyZodObject>(
-    startNode: Node<TBot, TInput, any>,
-    startData: z.infer<TInput>
-  ): void => {
-    this._initialState = { next: startNode.id, data: startData }
-  }
-
   public readonly reset = async (props: types.MessageHandlerProps<TBot>) => {
-    if (!this._initialState) {
+    if (!this._startNode) {
       throw new err.NoStartNodeDefined()
     }
     await this._stateRepo.set(props, this._initialState)
   }
 
   public readonly handler: types.MessageHandler<TBot> = async (props) => {
-    if (!this._initialState) {
+    if (!this._startNode) {
       throw new err.NoStartNodeDefined()
     }
 
