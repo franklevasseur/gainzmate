@@ -1,5 +1,13 @@
 import { z } from 'zod'
 import * as bp from '.botpress'
+import * as dallox from 'dallox'
+import { stateRepo } from './state'
+
+export type Bot = typeof bot
+export type MessageHandler = Parameters<Bot['message']>[0]
+export type MessageHandlerProps = Parameters<MessageHandler>[0]
+export type Flow = typeof flow
+export type FlowNode<TInput extends z.AnyZodObject> = ReturnType<typeof flow.declareNode<TInput>>
 
 export const bot = new bp.Bot({
   integrations: {
@@ -21,6 +29,4 @@ export const bot = new bp.Bot({
   },
 })
 
-export type Bot = typeof bot
-export type MessageHandler = Parameters<Bot['message']>[0]
-export type MessageHandlerProps = Parameters<MessageHandler>[0]
+export const flow = dallox.createFlow(bot, stateRepo)

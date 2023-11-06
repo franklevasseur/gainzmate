@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { Api } from 'src/api-utils'
-import { flow, FlowNode } from 'src/flow'
+import { flow, FlowNode } from 'src/bot'
 import { newCommand } from './new-command'
 
 const commandArgSchema = z.object({ argument: z.string() })

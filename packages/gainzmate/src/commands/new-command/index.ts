@@ -1,4 +1,4 @@
-import { flow, Flow } from 'src/flow'
+import { flow, Flow } from 'src/bot'
 import { z } from 'zod'
 import { liftSchema, parseLift } from './parse-lift'
 import { Api } from 'src/api-utils'
@@ -139,7 +139,7 @@ const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).
       return flow.transition(saveLift, props.data)
     } else {
       await Api.from(props).respondText('Lift entry cancelled.')
-      return flow.transition(promptName, {})
+      return null
     }
   }
 )

@@ -39,6 +39,10 @@ const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
     name: 'sets_reps',
     pattern: '[1-9][0-9]?x[1-9][0-9]?', // e.g. 5x5 or 3x10
   },
+  {
+    name: 'notes',
+    pattern: '\\(.*?\\)', // e.g. (this was too heavy)
+  },
 ]
 const patternExtractor = new bpentities.patterns.PatternEntityExtractor(patternDefinitions)
 
@@ -154,12 +158,19 @@ export const parseLift = (text: string): Partial<Lift> => {
     entities = entities.filter(isOut(repsEntity))
   }
 
+  const notesEntity: BpEntity | undefined = patternEntities.find((e) => e.name === 'notes')
+  let notes: Lift['notes'] | undefined = undefined
+  if (notesEntity) {
+    notes = notesEntity.value
+    entities = entities.filter(isOut(notesEntity))
+  }
+
   return {
     name,
     side,
     weight,
     sets,
     reps,
-    notes: undefined, // TODO: find a way to extract notes
+    notes,
   }
 }

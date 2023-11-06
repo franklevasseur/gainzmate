@@ -1,6 +1,5 @@
-import { bot } from './bot'
+import { bot, flow } from './bot'
 import { entry } from './commands'
-import { flow } from './flow'
 
 flow.start(async () => flow.transition(entry, {}))
 
