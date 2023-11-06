@@ -112,21 +112,21 @@ export const parseLift = (text: string): Partial<Lift> => {
   let name: Lift['name'] | undefined = undefined
   if (nameEntity) {
     name = nameEntity.value
-    entities = entities.filter(isOut)
+    entities = entities.filter(isOut(nameEntity))
   }
 
   const sideEntity: ListEntity | undefined = listEntities.find((e) => e.name === 'side')
   let side: Lift['side'] | undefined = undefined
   if (sideEntity) {
     side = sideEntity.value
-    entities = entities.filter(isOut)
+    entities = entities.filter(isOut(sideEntity))
   }
 
   const weightEntity: ListEntity | undefined = entities.find((e) => e.name === 'dimension')
   let weight: Lift['weight'] | undefined = undefined
   if (weightEntity) {
     weight = Number(weightEntity.value)
-    entities = entities.filter(isOut)
+    entities = entities.filter(isOut(weightEntity))
   }
 
   const sets = 1 // TODO: extract sets with regex /[1-9][0-9]?x[1-9][0-9]?/ (e.g. 5x5 or 3x10)
@@ -135,7 +135,7 @@ export const parseLift = (text: string): Partial<Lift> => {
   let reps: Lift['reps'] | undefined = undefined
   if (repsEntity) {
     reps = Number(repsEntity.value)
-    entities = entities.filter(isOut)
+    entities = entities.filter(isOut(repsEntity))
   }
 
   return {
