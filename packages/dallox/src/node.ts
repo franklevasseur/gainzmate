@@ -3,6 +3,14 @@ import { z } from 'zod'
 import * as err from './errors'
 import * as types from './types'
 
+type StaticQuestion = Pick<types.CreateMessageProps<Bot>, 'type' | 'payload'>
+type VariableQuestion<TInput extends z.AnyZodObject> = (props: types.NodeInput<Bot, TInput>) => StaticQuestion
+type Question<TInput extends z.AnyZodObject> = StaticQuestion | VariableQuestion<TInput>
+
+const isVariableQuestion = <TInput extends z.AnyZodObject>(
+  question: Question<TInput>
+): question is VariableQuestion<TInput> => typeof question === 'function'
+
 export class Node<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
   public constructor(
     public readonly id: string,
@@ -17,21 +25,25 @@ export class Node<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends
     return this
   }
 
-  public readonly prompt = (
-    question: Pick<types.CreateMessageProps<TBot>, 'type' | 'payload'>,
-    handler: types.NodeHandler<TBot, TInput, TNext>
-  ) => {
+  public readonly prompt = (question: Question<TInput>, handler: types.NodeHandler<TBot, TInput, TNext>) => {
     if (this.handler) {
       throw new err.NodeAlreadyImplementedError(this.id)
     }
 
     this.handler = async (args) => {
+      let staticQuestion: StaticQuestion
+      if (isVariableQuestion(question)) {
+        staticQuestion = question(args)
+      } else {
+        staticQuestion = question
+      }
+
       await args.client.createMessage({
         conversationId: args.message.conversationId,
         userId: args.ctx.botId,
         tags: {},
-        type: question.type,
-        payload: question.payload,
+        type: staticQuestion.type,
+        payload: staticQuestion.payload,
       })
 
       const next = validationNode as TNext

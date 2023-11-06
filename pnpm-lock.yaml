@@ -69,14 +69,17 @@ importers:
         specifier: 0.4.8
         version: 0.4.8
       '@bpinternal/entities':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.4
+        version: 0.0.4
       '@microsoft/recognizers-text-suite':
         specifier: ^1.3.1
         version: 1.3.1
       dallox:
         specifier: workspace:*
         version: link:../dallox
+      yn:
+        specifier: ^5.0.0
+        version: 5.0.0
       zod:
         specifier: ^3.20.6
         version: 3.20.6
@@ -154,8 +157,8 @@ packages:
       - debug
     dev: false
 
-  /@bpinternal/entities@0.0.3:
-    resolution: {integrity: sha512-wXLoSWW8NKo11jGUNKzNYgqqk856+Ua+i4HtWxzPukqJerMnkNEYMsBIj/MT1sZI4Ua8Tp6ScG2yVWqUqC1kHQ==}
+  /@bpinternal/entities@0.0.4:
+    resolution: {integrity: sha512-ymhtqvdmwik5jBFAvfTp/WFn7iyo9EoUx39vDejZYxE+RHzVtW2dJV8L/xIMDdzgsnQw3bDnlNAx7hYx7Vz1Ag==}
     dependencies:
       lodash: 4.17.21
     dev: false
@@ -4010,6 +4013,11 @@ packages:
     resolution: {integrity: sha512-huWiiCS4TxKc4SfgmTwW1K7JmXPPAmuXWYy4j9qjQo4+27Kni8mGhAAi1cloRWmBe2EqcLgt3IGqQoRL/MtPgg==}
     engines: {node: '>=10'}
     dev: true
+
+  /yn@5.0.0:
+    resolution: {integrity: sha512-+l37+9TyGEsyxGLaTg6QgYy5KnOp74ZZl4dPFLQpBWSkO99uBC5jnS0pOGwXFViPbiaEtWbParH2KrgWWF2duQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: false
 
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}

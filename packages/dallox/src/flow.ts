@@ -30,15 +30,18 @@ export class Flow<TBot extends Bot> {
     data: z.infer<TNext['input']>
   ): types.FlowTransition<TBot, TNext> => ({ action: 'yield', next, data })
 
-  public readonly start = () => {
+  public readonly start = (handler: types.NodeHandler<TBot, ZodEmptySchema, types.AnyNode<TBot>>): this => {
     if (this._startNode) {
       throw new err.StartNodeConflict()
     }
+
     const startId = '▁▁start▁▁'
     const node = new Node(startId, emptySchema, this._nodes)
+    node.handler = handler
+
     this._startNode = node
     this._nodes[startId] = node
-    return node
+    return this
   }
 
   public readonly declareNode = <TInput extends z.AnyZodObject>(declaration: types.NodeDeclaration<TBot, TInput>) => {
