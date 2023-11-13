@@ -102,6 +102,13 @@ const mapToBp = (entities: MsEntity[]): BpEntity[] => {
 const isOut = (e1: bpentities.Entity) => (eX: bpentities.Entity) =>
   eX.charEnd <= e1.charStart || eX.charStart >= e1.charEnd
 
+const stripParentheses = (text: string): string => {
+  let res = text.trim()
+  res = res.startsWith('(') ? res.slice(1) : res
+  res = res.endsWith(')') ? res.slice(0, -1) : res
+  return res
+}
+
 export const parseLift = (text: string): Partial<types.Lift> => {
   const listEntities = listExtractor.extract(text)
   const patternEntities = patternExtractor.extract(text)
@@ -149,7 +156,7 @@ export const parseLift = (text: string): Partial<types.Lift> => {
   const notesEntity: BpEntity | undefined = patternEntities.find((e) => e.name === 'notes')
   let notes: types.Lift['notes'] | undefined = undefined
   if (notesEntity) {
-    notes = notesEntity.value
+    notes = stripParentheses(notesEntity.value)
     entities = entities.filter(isOut(notesEntity))
   }
 
