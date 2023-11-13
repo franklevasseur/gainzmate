@@ -1,9 +1,10 @@
 import { flow, Flow } from 'src/bot'
 import { z } from 'zod'
-import { formatLift, liftSchema, parseLift } from '../parse-lift'
+import { formatLift, liftSchema, parseLift } from '../lift'
 import { Telegram } from 'src/integrations/telegram'
 import * as bp from '.botpress'
 import yn from 'yn'
+import { Gsheets } from 'src/integrations/gsheets'
 
 type _Messages = bp.telegram.channels.channel.Messages
 type Messages = {
@@ -125,7 +126,11 @@ const promptNotes = flow
   .declareNode({ id: 'prompt_notes', schema: promptNotesInput })
   .prompt(promptNotesQuestion, async (props) => {
     const text = props.message.payload.text as string
-    return next(flow, { ...props.data, notes: text })
+
+    const yesOrNo = yn(text)
+    const notes: string = yesOrNo === false ? '' : text
+
+    return next(flow, { ...props.data, notes })
   })
 
 const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).prompt(
@@ -143,6 +148,8 @@ const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).
 )
 
 const saveLift = flow.declareNode({ id: 'saveLift', schema: liftSchema }).execute(async (props) => {
-  Telegram.from(props).respondText(`Saving lift...`)
+  await Telegram.from(props).respondText(`Saving lift...`)
+  await Gsheets.from(props).appendLift(props.data)
+  await Telegram.from(props).respondText(`Done!`)
   return null
 })

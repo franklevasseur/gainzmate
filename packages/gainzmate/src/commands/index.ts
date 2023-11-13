@@ -3,6 +3,7 @@ import { Telegram } from 'src/integrations/telegram'
 import { flow, FlowNode } from 'src/bot'
 import { newCommand } from './new-command'
 import { viewCommand } from './view-command'
+import { linkCommand } from './link-command'
 
 const commandArgSchema = z.object({ argument: z.string() })
 type ZodCommandArg = typeof commandArgSchema
@@ -33,6 +34,10 @@ const commands = {
   '/view': {
     description: 'View existing lift entries',
     entry: viewCommand,
+  },
+  '/link': {
+    description: 'Get a link to the Google Sheet',
+    entry: linkCommand,
   },
   '/reset': {
     description: 'Reset the conversation state at any point during an exchange',

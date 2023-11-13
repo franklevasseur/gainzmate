@@ -1,5 +1,5 @@
 import { MessageHandlerProps } from 'src/bot'
-import { Lift, LiftEvent } from 'src/parse-lift'
+import { Lift, LiftEvent, Date } from 'src/lift'
 
 export const sheetName = 'data' as const
 
@@ -22,7 +22,8 @@ export class Gsheets {
   public static from = (props: MessageHandlerProps) => new Gsheets(props)
 
   public async appendLift(lift: Lift) {
-    const date = new Date().toISOString()
+    const date = Date.today().format()
+    console.log('date', date)
     const score = 0
     const row = [date, lift.name, lift.side, lift.weight, lift.sets, lift.reps, score, lift.notes]
     await this.props.client.callAction({
@@ -48,7 +49,7 @@ export class Gsheets {
     }
 
     return values.map((row) => ({
-      date: new Date(row[0]),
+      date: Date.from(row[0]),
       name: `${row[1]}`,
       side: `${row[2]}`,
       weight: Number(row[3]),
@@ -56,5 +57,15 @@ export class Gsheets {
       reps: Number(row[5]),
       notes: `${row[7]}`,
     }))
+  }
+
+  public async getSheetLink(): Promise<string | undefined> {
+    const { output } = await this.props.client.callAction({
+      type: 'gsheets:getInfoSpreadsheet',
+      input: {
+        fields: [],
+      },
+    })
+    return output.spreadsheetUrl ?? undefined
   }
 }

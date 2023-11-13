@@ -1,11 +1,7 @@
+import * as types from './types'
 import * as bpentities from '@bpinternal/entities'
-import * as msentities from '@microsoft/recognizers-text-suite'
+import * as msentities from '@microsoft/recognizers-text-number-with-unit'
 import { z } from 'zod'
-
-/**
- * TODO: this file cannot be bundled in the bot, everything crashes...
- * Probably because of the @microsoft/recognizers-text-suite dependency
- */
 
 const listDefinitions: bpentities.lists.ListEntityDef[] = [
   {
@@ -45,6 +41,10 @@ const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
     pattern: '[1-9][0-9]?x[1-9][0-9]?', // e.g. 5x5 or 3x10
   },
   {
+    name: 'reps',
+    pattern: '[1-9][0-9]?', // e.g. 5 or 10
+  },
+  {
     name: 'notes',
     pattern: '\\(.*?\\)', // e.g. (this was too heavy)
   },
@@ -54,7 +54,7 @@ const patternExtractor = new bpentities.patterns.PatternEntityExtractor(patternD
 type BpEntity = bpentities.Entity
 type MsEntity = ReturnType<typeof msModels[number]>[number]
 
-const msModels = [msentities.recognizeDimension, msentities.recognizeNumber]
+const msModels = [msentities.recognizeDimension]
 const msExtractor = (text: string) => {
   const allEntities: MsEntity[] = []
   for (const model of msModels) {
@@ -64,16 +64,15 @@ const msExtractor = (text: string) => {
   return allEntities
 }
 
-const commonMsSchema = z.object({ start: z.number(), end: z.number(), text: z.string() })
-const numberSchema = commonMsSchema.extend({
-  typeName: z.literal('number'),
-  resolution: z.object({ value: z.string() }),
-})
-const dimensionSchema = commonMsSchema.extend({
-  typeName: z.literal('dimension'),
-  resolution: z.object({ value: z.string(), unit: z.union([z.literal('Pound'), z.literal('Kilogram')]) }),
-})
-const msEntitySchema = z.union([numberSchema.passthrough(), dimensionSchema.passthrough()])
+const msEntitySchema = z
+  .object({
+    start: z.number(),
+    end: z.number(),
+    text: z.string(),
+    typeName: z.literal('dimension'),
+    resolution: z.object({ value: z.string(), unit: z.union([z.literal('Pound'), z.literal('Kilogram')]) }),
+  })
+  .passthrough()
 
 const mapToBp = (entities: MsEntity[]): BpEntity[] => {
   const known: z.infer<typeof msEntitySchema>[] = []
@@ -85,13 +84,8 @@ const mapToBp = (entities: MsEntity[]): BpEntity[] => {
   }
   const withNum = known.map((e) => ({ ...e, numValue: Number(e.resolution.value) })).filter((e) => !isNaN(e.numValue))
   return withNum.map((e) => {
-    let num: number
-    if (e.typeName === 'number') {
-      num = e.numValue
-    } else {
-      const factor = e.resolution.unit === 'Kilogram' ? 2.2 : 1
-      num = e.numValue * factor
-    }
+    const factor = e.resolution.unit === 'Kilogram' ? 2.2 : 1
+    const num = e.numValue * factor
     const value = `${num}`
     return {
       name: e.typeName,
@@ -108,19 +102,7 @@ const mapToBp = (entities: MsEntity[]): BpEntity[] => {
 const isOut = (e1: bpentities.Entity) => (eX: bpentities.Entity) =>
   eX.charEnd <= e1.charStart || eX.charStart >= e1.charEnd
 
-export const liftSchema = z.object({
-  name: z.string(),
-  side: z.string(),
-  weight: z.number(),
-  sets: z.number(),
-  reps: z.number(),
-  notes: z.string(),
-})
-
-export type Lift = z.infer<typeof liftSchema>
-export type LiftEvent = Lift & { date: Date }
-
-export const parseLift = (text: string): Partial<Lift> => {
+export const parseLift = (text: string): Partial<types.Lift> => {
   const listEntities = listExtractor.extract(text)
   const patternEntities = patternExtractor.extract(text)
   const msEntities = mapToBp(msExtractor(text))
@@ -128,31 +110,31 @@ export const parseLift = (text: string): Partial<Lift> => {
   let entities = [...listEntities, ...patternEntities, ...msEntities]
 
   const nameEntity: BpEntity | undefined = listEntities.find((e) => e.name === 'lift')
-  let name: Lift['name'] | undefined = undefined
+  let name: types.Lift['name'] | undefined = undefined
   if (nameEntity) {
     name = nameEntity.value
     entities = entities.filter(isOut(nameEntity))
   }
 
   const sideEntity: BpEntity | undefined = listEntities.find((e) => e.name === 'side')
-  let side: Lift['side'] | undefined = undefined
+  let side: types.Lift['side'] | undefined = undefined
   if (sideEntity) {
     side = sideEntity.value
     entities = entities.filter(isOut(sideEntity))
   }
 
   const weightEntity: BpEntity | undefined = entities.find((e) => e.name === 'dimension')
-  let weight: Lift['weight'] | undefined = undefined
+  let weight: types.Lift['weight'] | undefined = undefined
   if (weightEntity) {
     weight = Number(weightEntity.value)
     entities = entities.filter(isOut(weightEntity))
   }
 
   const setsAndRepsEntity: BpEntity | undefined = patternEntities.find((e) => e.name === 'sets_reps')
-  const repsEntity: BpEntity | undefined = entities.find((e) => e.name === 'number')
+  const repsEntity: BpEntity | undefined = entities.find((e) => e.name === 'reps')
 
-  let sets: Lift['sets'] | undefined = undefined
-  let reps: Lift['reps'] | undefined = undefined
+  let sets: types.Lift['sets'] | undefined = undefined
+  let reps: types.Lift['reps'] | undefined = undefined
   if (setsAndRepsEntity) {
     const [setsStr, repsStr] = setsAndRepsEntity.value.split('x')
     sets = Number(setsStr)
@@ -165,7 +147,7 @@ export const parseLift = (text: string): Partial<Lift> => {
   }
 
   const notesEntity: BpEntity | undefined = patternEntities.find((e) => e.name === 'notes')
-  let notes: Lift['notes'] | undefined = undefined
+  let notes: types.Lift['notes'] | undefined = undefined
   if (notesEntity) {
     notes = notesEntity.value
     entities = entities.filter(isOut(notesEntity))
@@ -179,12 +161,4 @@ export const parseLift = (text: string): Partial<Lift> => {
     reps,
     notes,
   }
-}
-
-export const formatLift = (lift: Lift): string =>
-  `${lift.name} ${lift.side} ${lift.weight}lbs ${lift.sets}x${lift.reps}`
-
-export const formatLiftEvent = (lift: LiftEvent): string => {
-  const date = lift.date.toISOString().split('T')[0]
-  return `${date} ${formatLift(lift)}`
 }

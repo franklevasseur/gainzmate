@@ -2,7 +2,7 @@ import { flow } from 'src/bot'
 import { z } from 'zod'
 import { Telegram } from 'src/integrations/telegram'
 import { Gsheets } from 'src/integrations/gsheets'
-import { formatLiftEvent, parseLift } from 'src/parse-lift'
+import { formatLiftEvent, parseLift } from 'src/lift'
 
 export const viewCommand = flow
   .declareNode({ id: 'view_command', schema: z.object({ argument: z.string() }) })
@@ -37,7 +37,8 @@ export const viewCommand = flow
       return null
     }
 
-    const formatted = filteredLifts.map(formatLiftEvent).join('\n - ')
+    const lines = ['Lifts:', ...filteredLifts.map(formatLiftEvent)]
+    const formatted = lines.join('\n - ')
     await Telegram.from(props).respondText(formatted)
     return null
   })
