@@ -1,7 +1,7 @@
 import { flow, Flow } from 'src/bot'
 import { z } from 'zod'
-import { liftSchema, parseLift } from './parse-lift'
-import { Api } from 'src/api-utils'
+import { formatLift, liftSchema, parseLift } from '../parse-lift'
+import { Telegram } from 'src/integrations/telegram'
 import * as bp from '.botpress'
 import yn from 'yn'
 
@@ -17,8 +17,6 @@ const choiceMessage = (text: string, choices: string[]): Messages['choice'] => (
   type: 'choice',
   payload: { text, options: choices.map((choice) => ({ value: choice, label: choice })) },
 })
-const formatLift = (lift: z.infer<typeof liftSchema>) =>
-  `${lift.name} ${lift.side} ${lift.weight}lbs ${lift.sets}x${lift.reps}`
 
 const promptNameInput = liftSchema.partial()
 const promptSideInput = promptNameInput.extend({ name: z.string() })
@@ -70,7 +68,7 @@ const promptName = flow
   .prompt(promptNameQuestion, async (props) => {
     const text = props.message.payload.text as string
     if (!text) {
-      await Api.from(props).respondText('Please enter a valid lift name.')
+      await Telegram.from(props).respondText('Please enter a valid lift name.')
       return flow.transition(promptName, props.data)
     }
     return next(flow, { ...props.data, name: text })
@@ -81,7 +79,7 @@ const promptSide = flow
   .prompt(promptSideQuestion, async (props) => {
     const text = props.message.payload.text as string
     if (!text) {
-      await Api.from(props).respondText('Please enter a valid side.')
+      await Telegram.from(props).respondText('Please enter a valid side.')
       return flow.transition(promptSide, props.data)
     }
     return next(flow, { ...props.data, side: text })
@@ -93,7 +91,7 @@ const promptWeight = flow
     const text = props.message.payload.text as string
     const weight = Number(text)
     if (!text || isNaN(weight)) {
-      await Api.from(props).respondText('Please enter a valid weight.')
+      await Telegram.from(props).respondText('Please enter a valid weight.')
       return flow.transition(promptWeight, props.data)
     }
     return next(flow, { ...props.data, weight })
@@ -105,7 +103,7 @@ const promptSets = flow
     const text = props.message.payload.text as string
     const sets = Number(text)
     if (!text || isNaN(sets)) {
-      await Api.from(props).respondText('Please enter a valid number of sets.')
+      await Telegram.from(props).respondText('Please enter a valid number of sets.')
       return flow.transition(promptSets, props.data)
     }
     return next(flow, { ...props.data, sets })
@@ -117,7 +115,7 @@ const promptReps = flow
     const text = props.message.payload.text as string
     const reps = Number(text)
     if (!text || isNaN(reps)) {
-      await Api.from(props).respondText('Please enter a valid number of reps.')
+      await Telegram.from(props).respondText('Please enter a valid number of reps.')
       return flow.transition(promptReps, props.data)
     }
     return next(flow, { ...props.data, reps })
@@ -138,13 +136,13 @@ const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).
     if (confirmed) {
       return flow.transition(saveLift, props.data)
     } else {
-      await Api.from(props).respondText('Lift entry cancelled.')
+      await Telegram.from(props).respondText('Lift entry cancelled.')
       return null
     }
   }
 )
 
 const saveLift = flow.declareNode({ id: 'saveLift', schema: liftSchema }).execute(async (props) => {
-  Api.from(props).respondText(`Saving lift...`)
+  Telegram.from(props).respondText(`Saving lift...`)
   return null
 })

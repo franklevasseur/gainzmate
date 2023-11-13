@@ -1,7 +1,8 @@
 import { z } from 'zod'
-import { Api } from 'src/api-utils'
+import { Telegram } from 'src/integrations/telegram'
 import { flow, FlowNode } from 'src/bot'
 import { newCommand } from './new-command'
+import { viewCommand } from './view-command'
 
 const commandArgSchema = z.object({ argument: z.string() })
 type ZodCommandArg = typeof commandArgSchema
@@ -14,7 +15,7 @@ const helpCommand = flow.declareNode({ id: 'help_command', schema: commandArgSch
   const help = Object.entries(commands)
     .map(([name, { description }]) => `${name} - ${description}`)
     .join('\n')
-  Api.from(props).respondText(help)
+  Telegram.from(props).respondText(help)
   return null
 })
 
@@ -29,6 +30,10 @@ const commands = {
     description: 'Create a new lift entry',
     entry: newCommand,
   },
+  '/view': {
+    description: 'View existing lift entries',
+    entry: viewCommand,
+  },
   '/reset': {
     description: 'Reset the conversation state at any point during an exchange',
     entry: resetCommand,
@@ -41,7 +46,7 @@ const isAvailableCommand = (cmd: string): cmd is AvailableCommand => cmd in comm
 export const entry = flow.declareNode({ id: 'entry', schema: z.object({}) }).execute(async (props) => {
   const { message } = props
 
-  const api = Api.from(props)
+  const api = Telegram.from(props)
 
   if (message.type !== 'text') {
     await api.respondText('Sorry, I only understand text messages.')

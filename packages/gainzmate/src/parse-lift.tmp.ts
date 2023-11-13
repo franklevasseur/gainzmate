@@ -2,6 +2,11 @@ import * as bpentities from '@bpinternal/entities'
 import * as msentities from '@microsoft/recognizers-text-suite'
 import { z } from 'zod'
 
+/**
+ * TODO: this file cannot be bundled in the bot, everything crashes...
+ * Probably because of the @microsoft/recognizers-text-suite dependency
+ */
+
 const listDefinitions: bpentities.lists.ListEntityDef[] = [
   {
     name: 'lift',
@@ -113,6 +118,7 @@ export const liftSchema = z.object({
 })
 
 export type Lift = z.infer<typeof liftSchema>
+export type LiftEvent = Lift & { date: Date }
 
 export const parseLift = (text: string): Partial<Lift> => {
   const listEntities = listExtractor.extract(text)
@@ -173,4 +179,12 @@ export const parseLift = (text: string): Partial<Lift> => {
     reps,
     notes,
   }
+}
+
+export const formatLift = (lift: Lift): string =>
+  `${lift.name} ${lift.side} ${lift.weight}lbs ${lift.sets}x${lift.reps}`
+
+export const formatLiftEvent = (lift: LiftEvent): string => {
+  const date = lift.date.toISOString().split('T')[0]
+  return `${date} ${formatLift(lift)}`
 }
