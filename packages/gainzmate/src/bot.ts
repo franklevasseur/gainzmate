@@ -12,7 +12,7 @@ export type FlowNode<TInput extends z.AnyZodObject> = ReturnType<typeof flow.dec
 const telegram = new bp.telegram.Telegram({
   enabled: true,
   config: {
-    botToken: '6402478878:AAE-zzePKjgIl23G4VoP_S1StPaf4JoBzHU',
+    botToken: '6896170040:AAFdYMUpAoqMhZr2RKkbpT2ZXsxWLp-72IU',
   },
 })
 
