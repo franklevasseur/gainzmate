@@ -61,6 +61,7 @@ export type PlotLineProps = {
 export type PlotPointProps = {
   x: number
   y: number
+  label?: string
   strength?: Strength
   color?: svglib.SVGColor
 }
@@ -74,7 +75,7 @@ export class PlotPoint extends PlotElement {
     return [this._props]
   }
 
-  public toSVG(scale: Scale): svglib.SVGElement {
+  public toSVG(scale: Scale): svglib.SVGElement[] {
     scale = this.padScale(scale)
 
     const { x, y } = this._props
@@ -89,12 +90,24 @@ export class PlotPoint extends PlotElement {
     const svgX = scaledX
     const svgY = height - scaledY
 
-    return new svglib.SVGCircle({
-      cx: svgX,
-      cy: svgY,
-      r: this.strokeWidth(scale, this._props.strength),
-      fill: this._props.color ?? 'red',
-    })
+    const elements: svglib.SVGElement[] = []
+
+    elements.push(
+      new svglib.SVGCircle({
+        cx: svgX,
+        cy: svgY,
+        r: this.strokeWidth(scale, this._props.strength),
+        fill: this._props.color ?? 'red',
+      })
+    )
+
+    if (this._props.label) {
+      const x = svgX + scale.width * 0.01
+      const y = svgY - scale.height * 0.01
+      elements.push(new svglib.SVGText({ x, y, text: this._props.label }))
+    }
+
+    return elements
   }
 }
 

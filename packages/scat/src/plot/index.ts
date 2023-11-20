@@ -4,7 +4,7 @@ import { PlotElement, Range } from './elements'
 
 export * from './elements'
 
-export type PlotProps = { width: number; height: number }
+export type PlotProps = { width: number; height: number; 'background-color'?: svglib.SVGColor }
 export class Plot {
   private _elements: PlotElement[] = []
 
@@ -15,7 +15,8 @@ export class Plot {
   }
 
   public render(): string {
-    const svg = new svglib.SVG({ ...this._props, style: 'background: #eee' })
+    const backgroundColor = this._props['background-color'] ?? '#eee'
+    const svg = new svglib.SVG({ ...this._props, style: `background: ${backgroundColor}` })
 
     const allPoints = this._elements.flatMap(({ box }) => box)
 
