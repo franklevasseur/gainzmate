@@ -1,10 +1,10 @@
 import { flow, Flow } from 'src/bot'
 import { z } from 'zod'
-import { formatLift, liftSchema, parseLift } from '../lift'
+import { formatLift, liftNameSchema, liftSideSchema, liftSchema, parseLift } from '../lift'
 import { Telegram } from 'src/integrations/telegram'
-import * as bp from '.botpress'
 import yn from 'yn'
 import { Gsheets } from 'src/integrations/gsheets'
+import * as bp from '.botpress'
 
 type _Messages = bp.telegram.channels.channel.Messages
 type Messages = {
@@ -19,19 +19,17 @@ const choiceMessage = (text: string, choices: string[]): Messages['choice'] => (
   payload: { text, options: choices.map((choice) => ({ value: choice, label: choice })) },
 })
 
-const promptNameInput = liftSchema.partial()
-const promptSideInput = promptNameInput.extend({ name: z.string() })
-const promptWeightInput = promptSideInput.extend({ side: z.string() })
+const promptNameInput = liftSchema.partial().extend({ notes: z.string() })
+const promptSideInput = promptNameInput.extend({ name: liftNameSchema })
+const promptWeightInput = promptSideInput.extend({ side: liftSideSchema })
 const promptSetsInput = promptWeightInput.extend({ weight: z.number() })
 const promptRepsInput = promptSetsInput.extend({ sets: z.number() })
-const promptNotesInput = promptRepsInput.extend({ reps: z.number() })
 
-const promptNameQuestion: Messages['choice'] = choiceMessage('What lift ?', ['pronation', 'rise'])
+const promptNameQuestion: Messages['choice'] = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer'])
 const promptSideQuestion: Messages['choice'] = choiceMessage('What side ?', ['left', 'right'])
 const promptWeightQuestion: Messages['text'] = textMessage('What weight (in lbs) ?')
 const promptSetsQuestion: Messages['text'] = textMessage('How many sets ?')
 const promptRepsQuestion: Messages['text'] = textMessage('How many reps ?')
-const promptNotesQuestion: Messages['text'] = textMessage('Anything else to add ?')
 
 const next = (flow: Flow, data: z.infer<typeof promptNameInput>) => {
   const { name, side, weight, sets, reps, notes } = data
@@ -50,9 +48,6 @@ const next = (flow: Flow, data: z.infer<typeof promptNameInput>) => {
   if (reps === undefined) {
     return flow.transition(promptReps, { ...data, name, side, sets, weight })
   }
-  if (notes === undefined) {
-    return flow.transition(promptNotes, { ...data, name, side, sets, weight, reps })
-  }
   return flow.transition(confirmLift, { ...data, name, side, sets, weight, reps, notes })
 }
 
@@ -61,29 +56,34 @@ export const newCommand = flow
   .execute(async (props) => {
     const { argument } = props.data
     const parsedLift = parseLift(argument)
-    return next(flow, parsedLift)
+    const { notes } = parsedLift
+    return next(flow, { ...parsedLift, notes: notes ?? '' })
   })
 
 const promptName = flow
   .declareNode({ id: 'prompt_name', schema: promptNameInput })
   .prompt(promptNameQuestion, async (props) => {
     const text = props.message.payload.text as string
-    if (!text) {
+    const parseResult = liftNameSchema.safeParse(text)
+    if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid lift name.')
       return flow.transition(promptName, props.data)
     }
-    return next(flow, { ...props.data, name: text })
+    const name = parseResult.data
+    return next(flow, { ...props.data, name })
   })
 
 const promptSide = flow
   .declareNode({ id: 'prompt_side', schema: promptSideInput })
   .prompt(promptSideQuestion, async (props) => {
     const text = props.message.payload.text as string
-    if (!text) {
+    const parseResult = liftSideSchema.safeParse(text)
+    if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid side.')
       return flow.transition(promptSide, props.data)
     }
-    return next(flow, { ...props.data, side: text })
+    const side = parseResult.data
+    return next(flow, { ...props.data, side })
   })
 
 const promptWeight = flow
@@ -120,17 +120,6 @@ const promptReps = flow
       return flow.transition(promptReps, props.data)
     }
     return next(flow, { ...props.data, reps })
-  })
-
-const promptNotes = flow
-  .declareNode({ id: 'prompt_notes', schema: promptNotesInput })
-  .prompt(promptNotesQuestion, async (props) => {
-    const text = props.message.payload.text as string
-
-    const yesOrNo = yn(text)
-    const notes: string = yesOrNo === false ? '' : text
-
-    return next(flow, { ...props.data, notes })
   })
 
 const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).prompt(

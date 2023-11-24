@@ -2,8 +2,9 @@ import { z } from 'zod'
 import { Telegram } from 'src/integrations/telegram'
 import { flow, FlowNode } from 'src/bot'
 import { newCommand } from './new-command'
-import { viewCommand } from './view-command'
+import { listCommand } from './list-command'
 import { linkCommand } from './link-command'
+import { viewCommand } from './view-command'
 
 const commandArgSchema = z.object({ argument: z.string() })
 type ZodCommandArg = typeof commandArgSchema
@@ -31,9 +32,9 @@ const commands = {
     description: 'Create a new lift entry',
     entry: newCommand,
   },
-  '/view': {
-    description: 'View existing lift entries',
-    entry: viewCommand,
+  '/list': {
+    description: 'List existing lift entries',
+    entry: listCommand,
   },
   '/link': {
     description: 'Get a link to the Google Sheet',
@@ -42,6 +43,10 @@ const commands = {
   '/reset': {
     description: 'Reset the conversation state at any point during an exchange',
     entry: resetCommand,
+  },
+  '/view': {
+    description: 'View a graph of your lifts',
+    entry: viewCommand,
   },
 } satisfies Record<string, Command>
 

@@ -3,7 +3,7 @@ import * as bpentities from '@bpinternal/entities'
 import * as msentities from '@microsoft/recognizers-text-number-with-unit'
 import { z } from 'zod'
 
-const listDefinitions: bpentities.lists.ListEntityDef[] = [
+const listDefinitions = [
   {
     name: 'lift',
     fuzzy: 'medium',
@@ -15,6 +15,10 @@ const listDefinitions: bpentities.lists.ListEntityDef[] = [
       {
         name: 'riser',
         synonyms: ['riser', 'rise', 'elevation', 'wrist elevation'],
+      },
+      {
+        name: 'hammer',
+        synonyms: ['hammer', 'hammer curl', 'hammer curls', 'hammers'],
       },
     ],
   },
@@ -32,7 +36,7 @@ const listDefinitions: bpentities.lists.ListEntityDef[] = [
       },
     ],
   },
-]
+] satisfies bpentities.lists.ListEntityDef[]
 const listExtractor = new bpentities.lists.ListEntityExtractor(listDefinitions)
 
 const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
@@ -119,14 +123,14 @@ export const parseLift = (text: string): Partial<types.Lift> => {
   const nameEntity: BpEntity | undefined = listEntities.find((e) => e.name === 'lift')
   let name: types.Lift['name'] | undefined = undefined
   if (nameEntity) {
-    name = nameEntity.value
+    name = nameEntity.value as types.Lift['name']
     entities = entities.filter(isOut(nameEntity))
   }
 
   const sideEntity: BpEntity | undefined = listEntities.find((e) => e.name === 'side')
   let side: types.Lift['side'] | undefined = undefined
   if (sideEntity) {
-    side = sideEntity.value
+    side = sideEntity.value as types.Lift['side']
     entities = entities.filter(isOut(sideEntity))
   }
 

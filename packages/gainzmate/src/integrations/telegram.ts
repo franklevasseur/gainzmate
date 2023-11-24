@@ -1,12 +1,17 @@
 import { MessageHandlerProps } from '../bot'
 import * as bp from '.botpress'
 
-type Messages = bp.telegram.channels.channel.Messages
+export type Messages = bp.telegram.channels.channel.Messages
 
 export class Telegram {
   private constructor(private readonly props: MessageHandlerProps) {}
 
   public static from = (props: MessageHandlerProps) => new Telegram(props)
+
+  public static createMessage = <T extends keyof Messages>(type: T, payload: Messages[T]) => ({
+    type: type,
+    payload: payload,
+  })
 
   public async respond<T extends keyof Messages>(type: T, payload: Messages[T]) {
     await this.props.client.createMessage({

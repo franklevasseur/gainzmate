@@ -1,19 +1,28 @@
 import moment from 'moment'
 
-const format = 'YYYY-MM-DD'
+type DateFormat = 'YYYY-MM-DD' | 'DD/MM'
+const defaultFormat: DateFormat = 'YYYY-MM-DD'
 
 export class Date {
   private constructor(private _moment: moment.Moment) {}
 
   public static from(date: string): Date {
-    return new Date(moment(date, format))
+    return new Date(moment(date, defaultFormat))
+  }
+
+  public static fromTime(time: number): Date {
+    return new Date(moment(time))
   }
 
   public static today(): Date {
     return new Date(moment())
   }
 
-  public format(): string {
-    return this._moment.format(format)
+  public format(f: DateFormat = defaultFormat): string {
+    return this._moment.format(f)
+  }
+
+  public getTime(): number {
+    return this._moment.valueOf()
   }
 }
