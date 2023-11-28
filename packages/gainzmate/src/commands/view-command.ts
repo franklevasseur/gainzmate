@@ -5,7 +5,8 @@ import { Gsheets } from 'src/integrations/gsheets'
 import { LiftEvent, parseLift, Date, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
 import * as utils from 'src/utils'
 import * as scat from 'scat'
-import { uploadToSpaces } from 'src/spaces'
+import * as spaces from 'src/spaces'
+import * as resvege from 'src/resvg'
 import crypto from 'crypto'
 import * as creds from 'src/creds'
 
@@ -161,8 +162,10 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
 
   const svg = render()
   const html = htmlPage(svg)
-  const fileName = `${hashSvg(svg)}.html`
-  const { objectUrl } = await uploadToSpaces(
+  const baseName = hashSvg(svg)
+
+  const svgFileName = `${baseName}.html`
+  const { objectUrl: svgUrl } = await spaces.upload(
     {
       region: creds.digitalocean.region,
       spaceName: creds.digitalocean.spaceName,
@@ -171,7 +174,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
     },
     {
       content: html,
-      fileName,
+      fileName: svgFileName,
       ACL: 'public-read',
       contentDisposition: 'inline',
       contentType: 'text/html',
@@ -179,7 +182,31 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   )
 
   await Telegram.from(props).respond('markdown', {
-    markdown: `See [${title}](${objectUrl})`,
+    markdown: `See [${title}](${svgUrl})`,
   })
+
+  const png = await resvege.render(svg)
+
+  const pngFileName = `${baseName}.png`
+  const { objectUrl: pngUrl } = await spaces.upload(
+    {
+      region: creds.digitalocean.region,
+      spaceName: creds.digitalocean.spaceName,
+      accessKey: creds.digitalocean.accessKey,
+      secretKey: creds.digitalocean.secretKey,
+    },
+    {
+      content: png,
+      fileName: pngFileName,
+      ACL: 'public-read',
+      contentDisposition: 'inline',
+      contentType: 'image/png',
+    }
+  )
+
+  await Telegram.from(props).respond('image', {
+    imageUrl: pngUrl,
+  })
+
   return null
 })

@@ -18,7 +18,7 @@ export class SVG {
   }
 
   public render(): string {
-    const svgTag = tag.create('svg', this._props)
+    const svgTag = tag.create('svg', { ...this._props, xmlns: 'http://www.w3.org/2000/svg' })
     const els = this._elements
       .map((e) => e.render())
       .map((x) => `  ${x}`)

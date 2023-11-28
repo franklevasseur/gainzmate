@@ -9,13 +9,13 @@ type SpaceCredentials = {
 
 type SpaceObject = {
   fileName: string
-  content: string
-  contentType: 'image/svg+xml' | 'text/html'
+  content: string | Uint8Array
+  contentType: 'image/svg+xml' | 'text/html' | 'image/png'
   contentDisposition: 'inline' | 'attachment'
   ACL: 'public-read' | 'private'
 }
 
-export const uploadToSpaces = async (credentials: SpaceCredentials, object: SpaceObject) => {
+export const upload = async (credentials: SpaceCredentials, object: SpaceObject) => {
   const { region, spaceName, accessKey, secretKey } = credentials
   const { ACL, contentType, contentDisposition, content, fileName } = object
 
