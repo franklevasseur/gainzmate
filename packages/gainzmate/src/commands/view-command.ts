@@ -182,7 +182,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   )
 
   await Telegram.from(props).respond('markdown', {
-    markdown: `See [${title}](${svgUrl})`,
+    markdown: `See SVG ${title} [here](${svgUrl})\\.`,
   })
 
   const png = await resvege.render(svg)
@@ -204,6 +204,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
     }
   )
 
+  await Telegram.from(props).respondText(`See PNG ${title} below:`)
   await Telegram.from(props).respond('image', {
     imageUrl: pngUrl,
   })

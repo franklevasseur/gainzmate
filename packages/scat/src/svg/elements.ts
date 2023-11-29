@@ -19,6 +19,7 @@ export type SVGCircleProps = {
   stroke?: SVGColor
 }
 
+export type SVGFontFamily = 'Arial' | 'Times New Roman'
 export type SVGTextProps = {
   x: number
   y: number
@@ -28,7 +29,9 @@ export type SVGTextProps = {
   style?: string
   transform?: string
   textLength?: number
+  'font-family'?: SVGFontFamily
 }
+const defaultFontFamily: SVGFontFamily = 'Arial'
 
 export abstract class SVGElement {
   public abstract render(): string
@@ -57,7 +60,9 @@ export class SVGText extends SVGElement {
     super()
   }
   public render(): string {
-    const textTag = tag.create('text', this._props)
+    const defaultProps: Partial<SVGTextProps> = { 'font-family': defaultFontFamily }
+    const textProps = { ...defaultProps, ...this._props }
+    const textTag = tag.create('text', textProps)
     return `${textTag.open}${this._props.text}${textTag.close}`
   }
 }
