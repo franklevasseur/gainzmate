@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022"],
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedParameters": true,
+    "target": "es2017",
+    "checkJs": false,
+    "incremental": true,
+    "exactOptionalPropertyTypes": false,
+    "resolveJsonModule": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "noErrorTruncation": true
+  }
+}

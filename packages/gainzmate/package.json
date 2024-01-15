@@ -1,0 +1,31 @@
+{
+  "name": "gainzmate",
+  "scripts": {
+    "type:check": "tsc --noEmit",
+    "test": "vitest run",
+    "add:integrations": "bp add telegram && bp add gsheets",
+    "build": "bp build"
+  },
+  "keywords": [],
+  "private": true,
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.456.0",
+    "@botpress/client": "0.5.2",
+    "@botpress/sdk": "0.4.8",
+    "@bpinternal/entities": "^0.0.4",
+    "@microsoft/recognizers-text-number-with-unit": "^1.3.1",
+    "@resvg/resvg-wasm": "^2.6.0",
+    "@types/node": "^18.11.18",
+    "axios": "^1.6.2",
+    "dallox": "workspace:*",
+    "moment": "^2.29.4",
+    "scat": "workspace:*",
+    "yn": "^3.1.1",
+    "zod": "^3.20.6"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.6"
+  }
+}

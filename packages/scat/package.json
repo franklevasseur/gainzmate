@@ -1,0 +1,23 @@
+{
+  "name": "scat",
+  "description": "Plotting lib that renders to SVG",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "type:check": "tsc --noEmit",
+    "example": "ts-node-dev -T ./examples/index.ts"
+  },
+  "keywords": [],
+  "private": true,
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@botpress/sdk": "0.4.8",
+    "zod": "^3.20.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "express": "^4.18.2",
+    "ts-node-dev": "^2.0.0"
+  }
+}

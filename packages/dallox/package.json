@@ -1,0 +1,17 @@
+{
+  "name": "dallox",
+  "description": "DalloX is a simple framework to build botpress bots as code with dialog features",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "type:check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "private": true,
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@botpress/sdk": "0.4.8",
+    "zod": "^3.20.6"
+  }
+}
