@@ -1,13 +1,13 @@
 import crypto from 'crypto'
 import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
-import * as creds from 'src/creds'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import { LiftEvent, parseLift, Date, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
 import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
+import * as config from 'src/config'
 import { z } from 'zod'
 
 const plotLifts = (lifts: LiftEvent[], title: string) => () => {
@@ -141,6 +141,16 @@ const promptSide = flow
   })
 
 const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift }).execute(async (props) => {
+  const parseResult = config.safeParseConfig(props)
+  if (!parseResult.success) {
+    await Telegram.from(props).respondText(
+      `Something is wrong with my configuration... I can't display the graph: ${parseResult.error}`
+    )
+    return null
+  }
+
+  const { data: creds } = parseResult
+
   const lifts = await Gsheets.from(props).getLifts()
 
   const filteredLifts = lifts.filter(utils.filterBy(props.data))
@@ -167,10 +177,10 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   const svgFileName = `${baseName}.html`
   const { objectUrl: svgUrl } = await spaces.upload(
     {
-      region: creds.digitalocean.region,
-      spaceName: creds.digitalocean.spaceName,
-      accessKey: creds.digitalocean.accessKey,
-      secretKey: creds.digitalocean.secretKey,
+      region: creds.spaceRegion,
+      spaceName: creds.spaceName,
+      accessKey: creds.spaceAccessKey,
+      secretKey: creds.spaceSecretKey,
     },
     {
       content: html,
@@ -190,10 +200,10 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   const pngFileName = `${baseName}.png`
   const { objectUrl: pngUrl } = await spaces.upload(
     {
-      region: creds.digitalocean.region,
-      spaceName: creds.digitalocean.spaceName,
-      accessKey: creds.digitalocean.accessKey,
-      secretKey: creds.digitalocean.secretKey,
+      region: creds.spaceRegion,
+      spaceName: creds.spaceName,
+      accessKey: creds.spaceAccessKey,
+      secretKey: creds.spaceSecretKey,
     },
     {
       content: png,

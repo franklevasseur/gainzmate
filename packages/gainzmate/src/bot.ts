@@ -1,8 +1,8 @@
 import * as dallox from 'dallox'
 import { z } from 'zod'
-import * as creds from './creds'
 import { stateRepo } from './state'
 import * as bp from '.botpress'
+import { botConfigSchema } from './config'
 
 export type Bot = typeof bot
 export type MessageHandler = Parameters<Bot['message']>[0]
@@ -10,21 +10,8 @@ export type MessageHandlerProps = Parameters<MessageHandler>[0]
 export type Flow = typeof flow
 export type FlowNode<TInput extends z.AnyZodObject> = ReturnType<typeof flow.declareNode<TInput>>
 
-const telegram = new bp.telegram.Telegram({
-  enabled: true,
-  config: {
-    botToken: creds.telegram.prodBotToken,
-  },
-})
-
-const gsheets = new bp.gsheets.Gsheets({
-  enabled: true,
-  config: {
-    spreadsheetId: creds.gsheets.spreadsheetId,
-    clientEmail: creds.gsheets.clientEmail,
-    privateKey: creds.gsheets.privateKey,
-  },
-})
+const telegram = new bp.telegram.Telegram()
+const gsheets = new bp.gsheets.Gsheets()
 
 export const bot = new bp.Bot({
   integrations: {
@@ -39,6 +26,9 @@ export const bot = new bp.Bot({
         data: z.object({}).passthrough(),
       }),
     },
+  },
+  configuration: {
+    schema: botConfigSchema,
   },
 })
 
