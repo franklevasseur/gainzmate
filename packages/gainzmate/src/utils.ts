@@ -24,8 +24,14 @@ export function stepspace(start: number, end: number, step: number): number[] {
   return linspace(start, start + n * step, n + 1)
 }
 
-export const rangeOf = (xs: number[]): { min: number; max: number } => {
+export const rangeOf = (xs: number[], unit: number | null = null): { min: number; max: number } => {
   const min = Math.min(...xs)
   const max = Math.max(...xs)
-  return { min, max }
+  if (unit === null) {
+    return { min, max }
+  }
+
+  const fakeMin = Math.floor(min / unit) * unit
+  const fakeMax = Math.ceil(max / unit) * unit
+  return { min: fakeMin, max: fakeMax }
 }

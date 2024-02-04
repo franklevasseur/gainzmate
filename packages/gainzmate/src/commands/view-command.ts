@@ -30,8 +30,12 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
   )
 
   const weights = lifts.map(({ weight }) => weight)
-  const weightRange = utils.rangeOf(weights)
-  const weightAxisLabels = utils.stepspace(weightRange.min, weightRange.max, 2.5).map((x) => x.toFixed(1))
+
+  const weightUnit = 2.5
+  const weightRange = utils.rangeOf(weights, weightUnit)
+
+  const weightAxisLabels = utils.stepspace(weightRange.min, weightRange.max, weightUnit).map((x) => x.toFixed(1))
+
   plot.add(
     new scat.PlotAxis({
       direction: 'y',
@@ -50,6 +54,24 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
       x: centerX,
       y: topY,
       strength: 'strong',
+    })
+  )
+
+  plot.add(
+    new scat.PlotPoint({
+      x: 0,
+      y: 0,
+      color: 'black',
+      strength: 'weakest',
+    })
+  )
+
+  plot.add(
+    new scat.PlotPoint({
+      x: dateRange.max - dateRange.min,
+      y: weightRange.max - weightRange.min,
+      color: 'black',
+      strength: 'weakest',
     })
   )
 
