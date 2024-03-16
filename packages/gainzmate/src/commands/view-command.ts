@@ -1,13 +1,13 @@
 import crypto from 'crypto'
 import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
+import * as config from 'src/config'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import { LiftEvent, parseLift, Date, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
 import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
-import * as config from 'src/config'
 import { z } from 'zod'
 
 const plotLifts = (lifts: LiftEvent[], title: string) => () => {
@@ -92,7 +92,7 @@ const viewableLift = promptSideInput.extend({ side: liftSideSchema })
 
 const choiceMessage = (text: string, options: string[]) =>
   Telegram.createMessage('choice', { text, options: options.map((option) => ({ value: option, label: option })) })
-const promptNameQuestion = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer'])
+const promptNameQuestion = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer', 'hook'])
 const promptSideQuestion = choiceMessage('What side ?', ['left', 'right'])
 
 const next = (flow: Flow, data: z.infer<typeof promptNameInput>) => {

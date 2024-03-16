@@ -25,9 +25,7 @@ export const safeParseConfig = (props: MessageHandlerProps): ParseResult => {
     const {
       ctx: { configuration },
     } = props
-
     const json = JSON.parse(configuration.payload)
-
     const parseRes = botConfigSchema.safeParse(json)
     if (parseRes.success) {
       return parseRes
