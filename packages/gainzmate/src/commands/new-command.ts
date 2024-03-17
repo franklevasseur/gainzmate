@@ -3,7 +3,7 @@ import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import yn from 'yn'
 import { z } from 'zod'
-import { formatLift, liftNameSchema, liftSideSchema, liftSchema, parseLift } from '../lift'
+import { formatLift, liftNameSchema, liftSideSchema, liftSchema, parseLift, liftEntity, sideEntity } from '../lift'
 import * as bp from '.botpress'
 
 type _Messages = bp.telegram.channels.channel.Messages
@@ -25,8 +25,10 @@ const promptWeightInput = promptSideInput.extend({ side: liftSideSchema })
 const promptSetsInput = promptWeightInput.extend({ weight: z.number() })
 const promptRepsInput = promptSetsInput.extend({ sets: z.number() })
 
-const promptNameQuestion: Messages['choice'] = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer'])
-const promptSideQuestion: Messages['choice'] = choiceMessage('What side ?', ['left', 'right'])
+const liftChoices = liftEntity.values.map((e) => e.name)
+const sideChoices = sideEntity.values.map((e) => e.name)
+const promptNameQuestion: Messages['choice'] = choiceMessage('What lift ?', liftChoices)
+const promptSideQuestion: Messages['choice'] = choiceMessage('What side ?', sideChoices)
 const promptWeightQuestion: Messages['text'] = textMessage('What weight (in lbs) ?')
 const promptSetsQuestion: Messages['text'] = textMessage('How many sets ?')
 const promptRepsQuestion: Messages['text'] = textMessage('How many reps ?')
@@ -133,7 +135,7 @@ const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).
       await Telegram.from(props).respondText('Lift entry cancelled.')
       return null
     }
-  }
+  },
 )
 
 const saveLift = flow.declareNode({ id: 'saveLift', schema: liftSchema }).execute(async (props) => {

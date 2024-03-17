@@ -26,7 +26,7 @@ export type FlowTransition<TBot extends Bot, TNext extends Node<TBot, any, any>>
 export type NodeOutput<TBot extends Bot, TNext extends Node<TBot, any, any>> = FlowTransition<TBot, TNext> | null
 
 export type NodeHandler<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends Node<TBot, any, any>> = (
-  props: NodeInput<TBot, TInput>
+  props: NodeInput<TBot, TInput>,
 ) => Promise<NodeOutput<TBot, TNext>>
 
 export type FlowState = {

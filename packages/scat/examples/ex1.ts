@@ -14,7 +14,7 @@ export const example1 = (): string => {
       x: 5,
       y: 105,
       strength: 'strong',
-    })
+    }),
   )
 
   plot.add(
@@ -24,7 +24,7 @@ export const example1 = (): string => {
         type: 'linear',
         labels: [0, 2.5, 5, 7.5, 10].map((x) => x.toString()),
       },
-    })
+    }),
   )
 
   plot.add(
@@ -34,7 +34,7 @@ export const example1 = (): string => {
         type: 'linear',
         labels: [0, 25, 50, 75, 100].map((x) => x.toString()),
       },
-    })
+    }),
   )
 
   for (const [xi, yi] of data) {
@@ -42,7 +42,7 @@ export const example1 = (): string => {
       new scat.PlotPoint({
         x: xi,
         y: yi,
-      })
+      }),
     )
   }
 

@@ -1,13 +1,15 @@
+// TODO: re-enable prettier in this file
+
 import crypto from 'crypto'
 import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
+import * as config from 'src/config'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import { LiftEvent, parseLift, Date, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
 import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
-import * as config from 'src/config'
 import { z } from 'zod'
 
 const plotLifts = (lifts: LiftEvent[], title: string) => () => {
@@ -26,7 +28,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
         type: 'linear',
         labels: dateAxisLabels,
       },
-    })
+    }),
   )
 
   const weights = lifts.map(({ weight }) => weight)
@@ -43,7 +45,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
         type: 'linear',
         labels: weightAxisLabels,
       },
-    })
+    }),
   )
 
   const centerX = (dateRange.max - dateRange.min) / 2
@@ -54,7 +56,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
       x: centerX,
       y: topY,
       strength: 'strong',
-    })
+    }),
   )
 
   plot.add(
@@ -77,7 +79,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
 
   const data = lifts.map(
     ({ date, weight, sets, reps }) =>
-      [date.getTime() - dateRange.min, weight - weightRange.min, `${sets}x${reps}`] as const
+      [date.getTime() - dateRange.min, weight - weightRange.min, `${sets}x${reps}`] as const,
   )
   for (const [x, y, info] of data) {
     plot.add(
@@ -86,7 +88,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
         y,
         color: 'blue',
         label: info,
-      })
+      }),
     )
   }
 
@@ -114,7 +116,7 @@ const viewableLift = promptSideInput.extend({ side: liftSideSchema })
 
 const choiceMessage = (text: string, options: string[]) =>
   Telegram.createMessage('choice', { text, options: options.map((option) => ({ value: option, label: option })) })
-const promptNameQuestion = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer'])
+const promptNameQuestion = choiceMessage('What lift ?', ['pronation', 'riser', 'hammer', 'hook'])
 const promptSideQuestion = choiceMessage('What side ?', ['left', 'right'])
 
 const next = (flow: Flow, data: z.infer<typeof promptNameInput>) => {
@@ -166,7 +168,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   const parseResult = config.safeParseConfig(props)
   if (!parseResult.success) {
     await Telegram.from(props).respondText(
-      `Something is wrong with my configuration... I can't display the graph: ${parseResult.error}`
+      `Something is wrong with my configuration... I can't display the graph: ${parseResult.error}`,
     )
     return null
   }
@@ -210,7 +212,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
       ACL: 'public-read',
       contentDisposition: 'inline',
       contentType: 'text/html',
-    }
+    },
   )
 
   await Telegram.from(props).respond('markdown', {
@@ -233,7 +235,7 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
       ACL: 'public-read',
       contentDisposition: 'inline',
       contentType: 'image/png',
-    }
+    },
   )
 
   await Telegram.from(props).respondText(`See PNG ${title} below:`)

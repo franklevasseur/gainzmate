@@ -8,14 +8,14 @@ type VariableQuestion<TInput extends z.AnyZodObject> = (props: types.NodeInput<B
 type Question<TInput extends z.AnyZodObject> = StaticQuestion | VariableQuestion<TInput>
 
 const isVariableQuestion = <TInput extends z.AnyZodObject>(
-  question: Question<TInput>
+  question: Question<TInput>,
 ): question is VariableQuestion<TInput> => typeof question === 'function'
 
 export class Node<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
   public constructor(
     public readonly id: string,
     public readonly input: TInput,
-    private readonly _nodes: types.NodeMap<TBot>
+    private readonly _nodes: types.NodeMap<TBot>,
   ) {}
 
   public handler: types.NodeHandler<TBot, TInput, TNext> | null = null

@@ -24,7 +24,7 @@ export const example2 = (): string => {
         type: 'linear',
         labels: xs.map((x) => x.toString()),
       },
-    })
+    }),
   )
 
   const allYs = [...ys1, ...ys2, ...ys3]
@@ -40,7 +40,7 @@ export const example2 = (): string => {
           .map((x) => Math.round(x * 10) / 10)
           .map((x) => x.toString()),
       },
-    })
+    }),
   )
 
   const ys = utils.zip(ys1, ys2, ys3)
@@ -51,7 +51,7 @@ export const example2 = (): string => {
         x: xi,
         y: yi1,
         color: 'red',
-      })
+      }),
     )
 
     plot.add(
@@ -59,7 +59,7 @@ export const example2 = (): string => {
         x: xi,
         y: yi2,
         color: 'blue',
-      })
+      }),
     )
 
     plot.add(
@@ -67,7 +67,7 @@ export const example2 = (): string => {
         x: xi,
         y: yi3,
         color: 'green',
-      })
+      }),
     )
   }
 

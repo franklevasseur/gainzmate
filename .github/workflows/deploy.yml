@@ -1,0 +1,21 @@
+name: Deploy Gainzmate
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        uses: ./.github/actions/install
+        with:
+          bp_token: ${{ secrets.BP_TOKEN }}
+          bp_workspace_id: ${{ secrets.BP_WORKSPACE_ID }}
+      - name: Build
+        working-directory: ./packages/gainzmate
+        run: pnpm bp build -y
+      - name: Deploy
+        run: |
+          pnpm bp deploy --botId ${{ secrets.BP_BOT_ID }} -y

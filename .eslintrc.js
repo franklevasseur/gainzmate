@@ -12,7 +12,6 @@ module.exports = {
   ignorePatterns: ['*.d.ts', '*.test.ts', '*.js', 'cdk.out/', 'dist/', 'node_modules/'],
   plugins: [
     'eslint-plugin-import',
-    'eslint-plugin-jsdoc',
     '@typescript-eslint',
     'unused-imports',
     'eslint-plugin-prettier',
@@ -85,7 +84,6 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
-    'jsdoc/check-alignment': 'error',
     'linebreak-style': ['error', 'unix'],
     'no-duplicate-imports': 'error',
     'no-trailing-spaces': 'error',

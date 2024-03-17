@@ -3,7 +3,7 @@
   "scripts": {
     "type:check": "tsc --noEmit",
     "test": "vitest run",
-    "add:integrations": "bp add telegram && bp add gsheets",
+    "add:integrations": "bp add telegram -y && bp add gsheets -y",
     "build": "bp build"
   },
   "keywords": [],

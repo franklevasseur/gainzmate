@@ -18,16 +18,19 @@ export class Flow<TBot extends Bot> {
     return { next: this._startNode.id, data: {} }
   }
 
-  public constructor(_bot: TBot, private _stateRepo: types.FlowStateRepository<TBot>) {}
+  public constructor(
+    _bot: TBot,
+    private _stateRepo: types.FlowStateRepository<TBot>,
+  ) {}
 
   public readonly transition = <TNext extends Node<TBot, any, any>>(
     next: TNext,
-    data: z.infer<TNext['input']>
+    data: z.infer<TNext['input']>,
   ): types.FlowTransition<TBot, TNext> => ({ action: 'hold', next, data })
 
   public readonly yield = <TNext extends Node<TBot, any, any>>(
     next: TNext,
-    data: z.infer<TNext['input']>
+    data: z.infer<TNext['input']>,
   ): types.FlowTransition<TBot, TNext> => ({ action: 'yield', next, data })
 
   public readonly start = (handler: types.NodeHandler<TBot, ZodEmptySchema, types.AnyNode<TBot>>): this => {

@@ -12,7 +12,10 @@ export class NodeNotFoundError extends FlowError {
   }
 }
 export class InvalidStateDataError extends FlowError {
-  public constructor(public readonly nodeId: string, public readonly error: z.ZodError) {
+  public constructor(
+    public readonly nodeId: string,
+    public readonly error: z.ZodError,
+  ) {
     super(`Cannot transition to node "${nodeId}" with invalid data: ${error.toString()}`)
   }
 }

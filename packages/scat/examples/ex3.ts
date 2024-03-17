@@ -95,7 +95,7 @@ const plot = (lifts: LiftEvent[], title: string) => () => {
         type: 'linear',
         labels: dateAxisLabels,
       },
-    })
+    }),
   )
 
   const weights = lifts.map(({ weight }) => weight)
@@ -108,7 +108,7 @@ const plot = (lifts: LiftEvent[], title: string) => () => {
         type: 'linear',
         labels: weightAxisLabels,
       },
-    })
+    }),
   )
 
   const centerX = (dateRange.max - dateRange.min) / 2
@@ -119,12 +119,12 @@ const plot = (lifts: LiftEvent[], title: string) => () => {
       x: centerX,
       y: topY,
       strength: 'strong',
-    })
+    }),
   )
 
   const data = lifts.map(
     ({ date, weight, sets, reps }) =>
-      [date.getTime() - dateRange.min, weight - weightRange.min, `${sets}x${reps}`] as const
+      [date.getTime() - dateRange.min, weight - weightRange.min, `${sets}x${reps}`] as const,
   )
   for (const [x, y, info] of data) {
     plot.add(
@@ -133,7 +133,7 @@ const plot = (lifts: LiftEvent[], title: string) => () => {
         y,
         color: 'blue',
         label: info,
-      })
+      }),
     )
   }
 

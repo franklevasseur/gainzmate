@@ -98,7 +98,7 @@ export class PlotPoint extends PlotElement {
         cy: svgY,
         r: this.strokeWidth(scale, this._props.strength),
         fill: this._props.color ?? 'red',
-      })
+      }),
     )
 
     if (this._props.label) {

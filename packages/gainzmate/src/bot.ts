@@ -1,8 +1,8 @@
 import * as dallox from 'dallox'
 import { z } from 'zod'
+import { botConfigSchema } from './config'
 import { stateRepo } from './state'
 import * as bp from '.botpress'
-import { botConfigSchema } from './config'
 
 export type Bot = typeof bot
 export type MessageHandler = Parameters<Bot['message']>[0]

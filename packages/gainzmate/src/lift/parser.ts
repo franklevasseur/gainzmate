@@ -3,40 +3,48 @@ import * as msentities from '@microsoft/recognizers-text-number-with-unit'
 import { z } from 'zod'
 import * as types from './types'
 
-const listDefinitions = [
-  {
-    name: 'lift',
-    fuzzy: 'medium',
-    values: [
-      {
-        name: 'pronation',
-        synonyms: ['pronation'],
-      },
-      {
-        name: 'riser',
-        synonyms: ['riser', 'rise', 'elevation', 'wrist elevation'],
-      },
-      {
-        name: 'hammer',
-        synonyms: ['hammer', 'hammer curl', 'hammer curls', 'hammers'],
-      },
-    ],
-  },
-  {
-    name: 'side',
-    fuzzy: 'medium',
-    values: [
-      {
-        name: 'left',
-        synonyms: ['left', 'gauche'],
-      },
-      {
-        name: 'right',
-        synonyms: ['right', 'droite'],
-      },
-    ],
-  },
-] satisfies bpentities.lists.ListEntityDef[]
+export type LiftName = (typeof liftEntity)['values'][number]['name']
+export const liftEntity = {
+  name: 'lift',
+  fuzzy: 'medium',
+  values: [
+    {
+      name: 'hook',
+      synonyms: ['hook', 'defensive hook', 'floor wrench', 'floor wrist wrench', 'hook curl'],
+    },
+    {
+      name: 'pronation',
+      synonyms: ['pronation', 'back pressure', 'back pressure pronation'],
+    },
+    {
+      name: 'riser',
+      synonyms: ['riser', 'rise', 'elevation', 'wrist elevation'],
+    },
+    {
+      name: 'hammer',
+      synonyms: ['hammer', 'hammer curl', 'hammer curls', 'hammers', 'dumbell hammer curl', 'dumbell hammer curls'],
+    },
+  ] as const,
+} satisfies bpentities.lists.ListEntityDef
+
+export type SideName = (typeof sideEntity)['values'][number]['name']
+export const sideEntity = {
+  name: 'side',
+  fuzzy: 'medium',
+  values: [
+    {
+      name: 'left',
+      synonyms: ['left', 'gauche'],
+    },
+    {
+      name: 'right',
+      synonyms: ['right', 'droite'],
+    },
+  ] as const,
+} satisfies bpentities.lists.ListEntityDef
+
+const listDefinitions = [liftEntity, sideEntity] satisfies bpentities.lists.ListEntityDef[]
+
 const listExtractor = new bpentities.lists.ListEntityExtractor(listDefinitions)
 
 const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
@@ -56,7 +64,7 @@ const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
 const patternExtractor = new bpentities.patterns.PatternEntityExtractor(patternDefinitions)
 
 type BpEntity = bpentities.Entity
-type MsEntity = ReturnType<typeof msModels[number]>[number]
+type MsEntity = ReturnType<(typeof msModels)[number]>[number]
 
 const msModels = [msentities.recognizeDimension]
 const msExtractor = (text: string) => {

@@ -1,0 +1,23 @@
+name: Run Checks
+
+on: pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        uses: ./.github/actions/install
+        with:
+          bp_token: ${{ secrets.BP_TOKEN }}
+          bp_workspace_id: ${{ secrets.BP_WORKSPACE_ID }}
+      - name: Format Check
+        run: pnpm format:check
+      - name: Lint Check
+        run: pnpm lint:check
+      - name: Type Check
+        run: pnpm type:check
+      - name: Test
+        run: pnpm test
