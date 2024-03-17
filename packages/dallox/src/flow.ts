@@ -18,10 +18,7 @@ export class Flow<TBot extends Bot> {
     return { next: this._startNode.id, data: {} }
   }
 
-  public constructor(
-    _bot: TBot,
-    private _stateRepo: types.FlowStateRepository<TBot>,
-  ) {}
+  public constructor(_bot: TBot, private _stateRepo: types.FlowStateRepository<TBot>) {}
 
   public readonly transition = <TNext extends Node<TBot, any, any>>(
     next: TNext,
