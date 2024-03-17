@@ -2,8 +2,8 @@
   "name": "gainzville",
   "scripts": {
     "type:check": "pnpm -r --stream type:check",
-    "format:check": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format:check": "prettier --version && prettier --check .",
+    "format:fix": "prettier --version && prettier --write .",
     "lint:check": "eslint ./ --ext .ts --ext .tsx",
     "lint:fix": "eslint --fix ./ --ext .ts --ext .tsx",
     "check": "pnpm format:check && pnpm lint:check && pnpm type:check",
@@ -24,9 +24,9 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-unused-imports": "^3.1.0",
-    "prettier": "^2.8.1",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "vitest": "^0.33.0"
   },
   "packageManager": "pnpm@8.6.0+"
