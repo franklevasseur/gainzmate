@@ -8,13 +8,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v2
-      - name: NPM Install
-        run: pnpm i
-      - name: Login to Botpress
-        run: pnpm bp login -y --token ${{ secrets.BP_TOKEN }} --workspace-id ${{ secrets.BP_WORKSPACE_ID }}
-      - name: Install Botpress Dependencies
-        working-directory: ./packages/gainzmate
-        run: pnpm add:integrations
+      - name: Install
+        uses: ./.github/actions/install
+        with:
+          bp_token: ${{ secrets.BP_TOKEN }}
+          bp_workspace_id: ${{ secrets.BP_WORKSPACE_ID }}
       - name: Format Check
         run: pnpm format:check
       - name: Lint Check
