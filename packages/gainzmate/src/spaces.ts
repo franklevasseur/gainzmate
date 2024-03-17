@@ -37,7 +37,7 @@ export const upload = async (credentials: SpaceCredentials, object: SpaceObject)
       ACL,
       ContentType: contentType,
       ContentDisposition: contentDisposition,
-    })
+    }),
   )
 
   const objectUrl = `https://${spaceName}.${region}.digitaloceanspaces.com/${fileName}`

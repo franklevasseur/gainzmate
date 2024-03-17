@@ -19,3 +19,5 @@ jobs:
         run: pnpm lint:check
       - name: Type Check
         run: pnpm type:check
+      - name: Test
+        run: pnpm test

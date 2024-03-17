@@ -3,7 +3,7 @@ import * as msentities from '@microsoft/recognizers-text-number-with-unit'
 import { z } from 'zod'
 import * as types from './types'
 
-export type LiftName = typeof liftEntity['values'][number]['name']
+export type LiftName = (typeof liftEntity)['values'][number]['name']
 export const liftEntity = {
   name: 'lift',
   fuzzy: 'medium',
@@ -27,7 +27,7 @@ export const liftEntity = {
   ] as const,
 } satisfies bpentities.lists.ListEntityDef
 
-export type SideName = typeof sideEntity['values'][number]['name']
+export type SideName = (typeof sideEntity)['values'][number]['name']
 export const sideEntity = {
   name: 'side',
   fuzzy: 'medium',
@@ -64,7 +64,7 @@ const patternDefinitions: bpentities.patterns.PatternEntityDef[] = [
 const patternExtractor = new bpentities.patterns.PatternEntityExtractor(patternDefinitions)
 
 type BpEntity = bpentities.Entity
-type MsEntity = ReturnType<typeof msModels[number]>[number]
+type MsEntity = ReturnType<(typeof msModels)[number]>[number]
 
 const msModels = [msentities.recognizeDimension]
 const msExtractor = (text: string) => {

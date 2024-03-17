@@ -135,7 +135,7 @@ const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).
       await Telegram.from(props).respondText('Lift entry cancelled.')
       return null
     }
-  }
+  },
 )
 
 const saveLift = flow.declareNode({ id: 'saveLift', schema: liftSchema }).execute(async (props) => {
