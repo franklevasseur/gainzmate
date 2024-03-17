@@ -17,5 +17,6 @@ jobs:
         working-directory: ./packages/gainzmate
         run: pnpm bp build -y
       - name: Deploy
+        working-directory: ./packages/gainzmate
         run: |
           pnpm bp deploy --botId ${{ secrets.BP_BOT_ID }} -y
