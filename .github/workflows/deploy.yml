@@ -1,0 +1,23 @@
+name: Deploy Gainzmate
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: NPM Install
+        run: pnpm i
+      - name: Login to Botpress
+        run: pnpm bp login -y --token ${{ secrets.BP_TOKEN }} --workspace-id ${{ secrets.BP_WORKSPACE_ID }}
+      - name: Install Botpress Dependencies
+        working-directory: ./packages/gainzmate
+        run: pnpm add:integrations
+      - name: Build
+        working-directory: ./packages/gainzmate
+        run: pnpm bp build -y
+      - name: Deploy
+        run: |
+          pnpm bp deploy --botId ${{ secrets.BP_BOT_ID }} -y

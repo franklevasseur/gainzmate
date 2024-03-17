@@ -1,0 +1,23 @@
+name: Run Checks
+
+on: pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: NPM Install
+        run: pnpm i
+      - name: Login to Botpress
+        run: pnpm bp login -y --token ${{ secrets.BP_TOKEN }} --workspace-id ${{ secrets.BP_WORKSPACE_ID }}
+      - name: Install Botpress Dependencies
+        working-directory: ./packages/gainzmate
+        run: pnpm add:integrations
+      - name: Format Check
+        run: pnpm format:check
+      - name: Lint Check
+        run: pnpm lint:check
+      - name: Type Check
+        run: pnpm type:check
