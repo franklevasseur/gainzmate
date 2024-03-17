@@ -1,3 +1,5 @@
+// TODO: re-enable prettier in this file
+
 import crypto from 'crypto'
 import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
@@ -9,8 +11,6 @@ import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
 import { z } from 'zod'
-
-//
 
 const plotLifts = (lifts: LiftEvent[], title: string) => () => {
   const viewWidth = 800

@@ -17,4 +17,5 @@ pnpm-lock.yaml
 gen
 dist
 .botpress
+packages/gainzmate/src/commands/view-command.ts
 
