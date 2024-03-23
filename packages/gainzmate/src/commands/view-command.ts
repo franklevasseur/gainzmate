@@ -5,7 +5,7 @@ import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
-import { LiftEvent, parseLift, Date, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
+import { LiftEvent, parseLift, DateTime, liftSchema, liftNameSchema, liftSideSchema } from 'src/lift'
 import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
@@ -28,7 +28,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
 
   const dateAxis = lifts.map(({ date }) => date)
   const dateRange = utils.rangeOf(dateAxis.map((date) => date.getTime()))
-  const dateAxisLabels = utils.linspace(dateRange.min, dateRange.max, 10).map((t) => Date.fromTime(t).format('DD/MM'))
+  const dateAxisLabels = utils.linspace(dateRange.min, dateRange.max, 10).map((t) => DateTime.fromTime(t).format('DD/MM'))
   plot.add(
     new scat.PlotAxis({
       direction: 'x',

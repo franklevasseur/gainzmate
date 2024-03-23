@@ -1,5 +1,5 @@
 import { MessageHandlerProps } from 'src/bot'
-import { Lift, LiftEvent, Date } from 'src/lift'
+import { Lift, LiftEvent, DateTime } from 'src/lift'
 
 export const sheetName = 'data' as const
 
@@ -22,7 +22,7 @@ export class Gsheets {
   public static from = (props: MessageHandlerProps) => new Gsheets(props)
 
   public async appendLift(lift: Lift) {
-    const date = Date.today().format()
+    const date = DateTime.today().format()
     console.log('date', date)
     const score = 0
     const row = [date, lift.name, lift.side, lift.weight, lift.sets, lift.reps, score, lift.notes]
@@ -49,7 +49,7 @@ export class Gsheets {
     }
 
     return values.map((row) => ({
-      date: Date.from(row[0]),
+      date: DateTime.from(row[0]),
       name: `${row[1]}` as Lift['name'],
       side: `${row[2]}` as Lift['side'],
       weight: Number(row[3]),

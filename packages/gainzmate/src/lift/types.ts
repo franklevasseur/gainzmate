@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import * as date from './date'
+import * as date from './datetime'
 import { LiftName } from './parser'
 
 export const liftNameSchema = z.union([
@@ -21,7 +21,7 @@ export const liftSchema = z.object({
 })
 
 export type Lift = z.infer<typeof liftSchema>
-export type LiftEvent = Lift & { date: date.Date }
+export type LiftEvent = Lift & { date: date.DateTime }
 
 type Equals<T, U> = T extends U ? (U extends T ? true : false) : false
 type Expect<C extends true> = C
