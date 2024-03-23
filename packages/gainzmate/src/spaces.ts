@@ -1,13 +1,13 @@
 import * as s3 from '@aws-sdk/client-s3'
 
-type SpaceCredentials = {
-  spaceName: string
+export type SpaceCredentials = {
+  name: string
   region: string
   accessKey: string
   secretKey: string
 }
 
-type SpaceObject = {
+export type SpaceObject = {
   fileName: string
   content: string | Uint8Array
   contentType: 'image/svg+xml' | 'text/html' | 'image/png'
@@ -16,7 +16,7 @@ type SpaceObject = {
 }
 
 export const upload = async (credentials: SpaceCredentials, object: SpaceObject) => {
-  const { region, spaceName, accessKey, secretKey } = credentials
+  const { region, name, accessKey, secretKey } = credentials
   const { ACL, contentType, contentDisposition, content, fileName } = object
 
   const s3Client = new s3.S3Client({
@@ -31,7 +31,7 @@ export const upload = async (credentials: SpaceCredentials, object: SpaceObject)
 
   await s3Client.send(
     new s3.PutObjectCommand({
-      Bucket: spaceName,
+      Bucket: name,
       Key: fileName,
       Body: content,
       ACL,
@@ -40,6 +40,6 @@ export const upload = async (credentials: SpaceCredentials, object: SpaceObject)
     }),
   )
 
-  const objectUrl = `https://${spaceName}.${region}.digitaloceanspaces.com/${fileName}`
+  const objectUrl = `https://${name}.${region}.digitaloceanspaces.com/${fileName}`
   return { objectUrl }
 }

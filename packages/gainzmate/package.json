@@ -4,7 +4,8 @@
     "type:check": "tsc --noEmit",
     "test": "vitest run",
     "add:integrations": "bp add telegram -y && bp add gsheets -y",
-    "build": "bp build"
+    "gen:secrets": "ts-node -T ./secrets './.botpress/secrets.ts'",
+    "build": "pnpm gen:secrets && bp build"
   },
   "keywords": [],
   "private": true,
@@ -26,6 +27,8 @@
     "zod": "^3.20.6"
   },
   "devDependencies": {
+    "@bpinternal/yargs-extra": "^0.0.5",
+    "dotenv": "^16.4.5",
     "vitest": "^0.34.6"
   }
 }

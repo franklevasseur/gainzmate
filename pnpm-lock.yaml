@@ -99,6 +99,12 @@ importers:
         specifier: ^3.20.6
         version: 3.20.6
     devDependencies:
+      '@bpinternal/yargs-extra':
+        specifier: ^0.0.5
+        version: 0.0.5
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
@@ -798,6 +804,17 @@ packages:
 
   /@bpinternal/yargs-extra@0.0.3:
     resolution: {integrity: sha512-e/unlq0LX4CJUv1jGOv1UgwB/h2M0NCXnwD4lEw496GpkQikO668RS+BBlRhkqdGfZmvKDkXZZ96xJCn+i6Ymg==}
+    dependencies:
+      '@types/yargs': 17.0.29
+      decamelize: 5.0.1
+      json-schema: 0.4.0
+      lodash: 4.17.21
+      yargs: 17.7.2
+      yn: 4.0.0
+    dev: true
+
+  /@bpinternal/yargs-extra@0.0.5:
+    resolution: {integrity: sha512-1mMFhaIQLh7biz086Fcq3MvIGEgVj5Qq7Vd+dDEnip4aBdrXeMDtwFQIfvEx+uhp6lzXPf8ScpGBmaraQjgdGw==}
     dependencies:
       '@types/yargs': 17.0.29
       decamelize: 5.0.1
@@ -2795,6 +2812,11 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+    engines: {node: '>=12'}
     dev: true
 
   /duplexer3@0.1.5:
