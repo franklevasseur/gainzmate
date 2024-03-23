@@ -1,49 +1,10 @@
 import * as bpentities from '@bpinternal/entities'
 import * as msentities from '@microsoft/recognizers-text-number-with-unit'
 import { z } from 'zod'
+import * as entities from './entities'
 import * as types from './types'
 
-export type LiftName = (typeof liftEntity)['values'][number]['name']
-export const liftEntity = {
-  name: 'lift',
-  fuzzy: 'medium',
-  values: [
-    {
-      name: 'hook',
-      synonyms: ['hook', 'defensive hook', 'floor wrench', 'floor wrist wrench', 'hook curl'],
-    },
-    {
-      name: 'pronation',
-      synonyms: ['pronation', 'back pressure', 'back pressure pronation'],
-    },
-    {
-      name: 'riser',
-      synonyms: ['riser', 'rise', 'elevation', 'wrist elevation'],
-    },
-    {
-      name: 'hammer',
-      synonyms: ['hammer', 'hammer curl', 'hammer curls', 'hammers', 'dumbell hammer curl', 'dumbell hammer curls'],
-    },
-  ] as const,
-} satisfies bpentities.lists.ListEntityDef
-
-export type SideName = (typeof sideEntity)['values'][number]['name']
-export const sideEntity = {
-  name: 'side',
-  fuzzy: 'medium',
-  values: [
-    {
-      name: 'left',
-      synonyms: ['left', 'gauche'],
-    },
-    {
-      name: 'right',
-      synonyms: ['right', 'droite'],
-    },
-  ] as const,
-} satisfies bpentities.lists.ListEntityDef
-
-const listDefinitions = [liftEntity, sideEntity] satisfies bpentities.lists.ListEntityDef[]
+const listDefinitions = [entities.liftEntity, entities.sideEntity] satisfies bpentities.lists.ListEntityDef[]
 
 const listExtractor = new bpentities.lists.ListEntityExtractor(listDefinitions)
 

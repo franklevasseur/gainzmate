@@ -1,5 +1,5 @@
 import { MessageHandlerProps } from 'src/bot'
-import { Lift, LiftEvent, Date } from 'src/lift'
+import { Lift, LiftEvent, DateTime, liftNameSchema, liftSideSchema } from 'src/lift'
 
 export const sheetName = 'data' as const
 
@@ -16,13 +16,27 @@ export const columns = {
 
 export const range = `${sheetName}!A2:H999`
 
+type ParsedRow = {
+  date: DateTime // 0
+  name: string // 1
+  side: string // 2
+  weight: number // 3
+  sets: number // 4
+  reps: number // 5
+  // score: number // 6
+  notes: string // 7
+}
+
+const isLift = (row: ParsedRow): row is LiftEvent =>
+  liftNameSchema.safeParse(row.name).success && liftSideSchema.safeParse(row.side).success
+
 export class Gsheets {
   private constructor(private readonly props: MessageHandlerProps) {}
 
   public static from = (props: MessageHandlerProps) => new Gsheets(props)
 
   public async appendLift(lift: Lift) {
-    const date = Date.today().format()
+    const date = DateTime.today().format()
     console.log('date', date)
     const score = 0
     const row = [date, lift.name, lift.side, lift.weight, lift.sets, lift.reps, score, lift.notes]
@@ -48,15 +62,17 @@ export class Gsheets {
       return []
     }
 
-    return values.map((row) => ({
-      date: Date.from(row[0]),
-      name: `${row[1]}` as Lift['name'],
-      side: `${row[2]}` as Lift['side'],
+    const rows: ParsedRow[] = values.map((row) => ({
+      date: DateTime.from(row[0]),
+      name: String(row[1]),
+      side: String(row[2]),
       weight: Number(row[3]),
       sets: Number(row[4]),
       reps: Number(row[5]),
-      notes: `${row[7]}`,
+      notes: String(row[7]),
     }))
+
+    return rows.filter(isLift)
   }
 
   public async getSheetLink(): Promise<string | undefined> {
