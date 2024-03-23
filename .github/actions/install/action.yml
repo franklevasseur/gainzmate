@@ -76,4 +76,4 @@ runs:
         DIGITALOCEAN_SPACE_ACCESS_KEY: ${{ inputs.digitalocean_space_name }}
         DIGITALOCEAN_SPACE_SECRET_KEY: ${{ inputs.digitalocean_space_access_key }}
         GSHEETS_PRIVATE_KEY: ${{ inputs.digitalocean_space_secret_key }}
-      run: pnpm add:telegram
+      run: pnpm gen:secrets
