@@ -13,6 +13,14 @@ jobs:
         with:
           bp_token: ${{ secrets.BP_TOKEN }}
           bp_workspace_id: ${{ secrets.BP_WORKSPACE_ID }}
+          telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          gsheets_spreadsheet_id: ${{ secrets.GSHEETS_SPREADSHEET_ID }}
+          gsheets_client_email: ${{ secrets.GSHEETS_CLIENT_EMAIL }}
+          digitalocean_space_region: ${{ secrets.DIGITALOCEAN_SPACE_REGION }}
+          digitalocean_space_name: ${{ secrets.DIGITALOCEAN_SPACE_NAME }}
+          digitalocean_space_access_key: ${{ secrets.DIGITALOCEAN_SPACE_ACCESS_KEY }}
+          digitalocean_space_secret_key: ${{ secrets.DIGITALOCEAN_SPACE_SECRET_KEY }}
+          gsheets_private_key: ${{ secrets.GSHEETS_PRIVATE_KEY }}
       - name: Build
         working-directory: ./packages/gainzmate
         run: pnpm bp build -y

@@ -5,7 +5,40 @@ inputs:
   bp_token:
     type: string
     required: true
+
   bp_workspace_id:
+    type: string
+    required: true
+
+  telegram_bot_token:
+    type: string
+    required: true
+
+  gsheets_spreadsheet_id:
+    type: string
+    required: true
+
+  gsheets_client_email:
+    type: string
+    required: true
+
+  digitalocean_space_region:
+    type: string
+    required: true
+
+  digitalocean_space_name:
+    type: string
+    required: true
+
+  digitalocean_space_access_key:
+    type: string
+    required: true
+
+  digitalocean_space_secret_key:
+    type: string
+    required: true
+
+  gsheets_private_key:
     type: string
     required: true
 
@@ -31,3 +64,16 @@ runs:
     - shell: bash
       working-directory: ./packages/gainzmate
       run: pnpm add:integrations
+
+    - shell: bash
+      working-directory: ./packages/gainzmate
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ inputs.telegram_bot_token }}
+        GSHEETS_SPREADSHEET_ID: ${{ inputs.gsheets_spreadsheet_id }}
+        GSHEETS_CLIENT_EMAIL: ${{ inputs.gsheets_client_email }}
+        DIGITALOCEAN_SPACE_REGION: ${{ inputs.gsheets_private_key }}
+        DIGITALOCEAN_SPACE_NAME: ${{ inputs.digitalocean_space_region }}
+        DIGITALOCEAN_SPACE_ACCESS_KEY: ${{ inputs.digitalocean_space_name }}
+        DIGITALOCEAN_SPACE_SECRET_KEY: ${{ inputs.digitalocean_space_access_key }}
+        GSHEETS_PRIVATE_KEY: ${{ inputs.digitalocean_space_secret_key }}
+      run: pnpm gen:secrets
