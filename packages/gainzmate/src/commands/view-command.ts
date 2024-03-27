@@ -212,24 +212,25 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
     markdown: `See SVG ${title} [here](${svgUrl})\\.`,
   })
 
-  const png = await resvege.render(svg)
+  await Telegram.from(props).respondText('PNG rendering is disabled for now.')
 
-  const pngFileName = `${baseName}.png`
-  const { objectUrl: pngUrl } = await spaces.upload(
-    creds,
-    {
-      content: png,
-      fileName: pngFileName,
-      ACL: 'public-read',
-      contentDisposition: 'inline',
-      contentType: 'image/png',
-    },
-  )
+  // const png = await resvege.render(svg)
+  // const pngFileName = `${baseName}.png`
+  // const { objectUrl: pngUrl } = await spaces.upload(
+  //   creds,
+  //   {
+  //     content: png,
+  //     fileName: pngFileName,
+  //     ACL: 'public-read',
+  //     contentDisposition: 'inline',
+  //     contentType: 'image/png',
+  //   },
+  // )
 
-  await Telegram.from(props).respondText(`See PNG ${title} below:`)
-  await Telegram.from(props).respond('image', {
-    imageUrl: pngUrl,
-  })
+  // await Telegram.from(props).respondText(`See PNG ${title} below:`)
+  // await Telegram.from(props).respond('image', {
+  //   imageUrl: pngUrl,
+  // })
 
   return null
 })
