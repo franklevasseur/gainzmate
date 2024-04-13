@@ -1,6 +1,8 @@
 # GainzMate
 
-<img src="./readme.png" />
+<p align="center" width="100%">
+    <img src="./readme.png" />
+</p>
 
 ## Description
 
