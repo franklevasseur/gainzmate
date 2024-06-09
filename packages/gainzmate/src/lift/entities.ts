@@ -41,6 +41,10 @@ export const liftEntity = {
       name: 'cup',
       synonyms: ['cup', 'containment', 'wristmax', 'mazurenko'],
     },
+    {
+      name: 'side',
+      synonyms: ['side', 'side pressure'],
+    },
   ] as const,
 } satisfies bpentities.lists.ListEntityDef
 
