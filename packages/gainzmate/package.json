@@ -3,7 +3,7 @@
   "scripts": {
     "type:check": "tsc --noEmit",
     "test": "vitest run",
-    "add:integrations": "bp add telegram -y && bp add gsheets -y",
+    "add:integrations": "bp add telegram@0.4.5 -y && bp add gsheets@0.3.3 -y",
     "gen:secrets": "ts-node -T ./secrets './.botpress/secrets.ts'",
     "build": "pnpm gen:secrets && bp build"
   },
