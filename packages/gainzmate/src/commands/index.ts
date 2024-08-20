@@ -1,6 +1,6 @@
+import { z } from '@botpress/sdk'
 import { flow, FlowNode } from 'src/bot'
 import { Telegram } from 'src/integrations/telegram'
-import { z } from 'zod'
 import { linkCommand } from './link-command'
 import { listCommand } from './list-command'
 import { newCommand } from './new-command'

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from '@botpress/sdk'
 
 export class FlowError extends Error {}
 export class InfiniteLoopError extends FlowError {

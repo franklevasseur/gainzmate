@@ -1,5 +1,5 @@
+import { z } from '@botpress/sdk'
 import * as bpentities from '@bpinternal/entities'
-import * as z from 'zod'
 
 type EntityValue = { name: string }
 type ToZodTuple<T extends readonly EntityValue[]> = { [I in keyof T]: z.ZodLiteral<T[I]['name']> }

@@ -1,7 +1,7 @@
+import { z } from '@botpress/sdk'
 import { flow } from 'src/bot'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
-import { z } from 'zod'
 
 export const linkCommand = flow
   .declareNode({ id: 'link_command', schema: z.object({ argument: z.string() }) })
