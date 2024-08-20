@@ -1,5 +1,4 @@
-import { Bot } from '@botpress/sdk'
-import { z } from 'zod'
+import { z, Bot } from '@botpress/sdk'
 import * as err from './errors'
 import * as types from './types'
 
@@ -11,7 +10,7 @@ const isVariableQuestion = <TInput extends z.AnyZodObject>(
   question: Question<TInput>,
 ): question is VariableQuestion<TInput> => typeof question === 'function'
 
-export class Node<TBot extends Bot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
+export class Node<TBot extends types.AnyBot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
   public constructor(
     public readonly id: string,
     public readonly input: TInput,

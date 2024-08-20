@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from '@botpress/sdk'
 import * as date from './datetime'
 import * as entities from './entities'
 

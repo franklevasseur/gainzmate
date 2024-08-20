@@ -1,6 +1,6 @@
+import { z } from '@botpress/sdk'
 import * as bpentities from '@bpinternal/entities'
 import * as msentities from '@microsoft/recognizers-text-number-with-unit'
-import { z } from 'zod'
 import * as entities from './entities'
 import * as types from './types'
 

@@ -6,7 +6,7 @@ flow.start(async () => flow.transition(entry, {}))
 bot.message(async (props) => {
   console.info('[START] process_message', props.message)
 
-  if (props.message.payload.text === '/reset') {
+  if (props.message.type === 'text' && props.message.payload.text === '/reset') {
     // TODO: implement flow hooks
     await flow.reset(props)
   } else {

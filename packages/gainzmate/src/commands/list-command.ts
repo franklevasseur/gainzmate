@@ -1,9 +1,9 @@
+import { z } from '@botpress/sdk'
 import { flow } from 'src/bot'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import { formatLiftEvent, parseLift } from 'src/lift'
 import { filterBy } from 'src/utils'
-import { z } from 'zod'
 
 export const listCommand = flow
   .declareNode({ id: 'list_command', schema: z.object({ argument: z.string() }) })

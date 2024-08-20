@@ -1,4 +1,5 @@
 import * as fslib from 'fs'
+import * as pathlib from 'path'
 import { Config } from './config'
 
 export type Complete<T extends object> = {
@@ -35,6 +36,8 @@ export const main = async (config: Config, outFile: string) => {
   ].join('\n')
 
   console.log(`Writing secrets to "${outFile}"`)
+
+  await fslib.promises.mkdir(pathlib.dirname(outFile), { recursive: true })
   await fslib.promises.writeFile(outFile, tsScript)
 }
 

@@ -1,5 +1,6 @@
 // TODO: re-enable prettier in this file
 
+import { z } from '@botpress/sdk'
 import crypto from 'crypto'
 import * as scat from 'scat'
 import { Flow, flow } from 'src/bot'
@@ -9,7 +10,6 @@ import { LiftEvent, parseLift, DateTime, liftSchema, liftNameSchema, liftSideSch
 import * as resvege from 'src/resvg'
 import * as spaces from 'src/spaces'
 import * as utils from 'src/utils'
-import { z } from 'zod'
 import * as secrets from '.botpress/secrets'
 
 const creds: spaces.SpaceCredentials = {
@@ -149,7 +149,11 @@ export const viewCommand = flow
 const promptName = flow
   .declareNode({ id: 'prompt_name', schema: promptNameInput })
   .prompt(promptNameQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid lift name.')
+      return flow.transition(promptName, props.data)
+    }
+    const { text } = props.message.payload
     const parseResult = liftNameSchema.safeParse(text)
     if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid lift name.')
@@ -162,7 +166,11 @@ const promptName = flow
 const promptSide = flow
   .declareNode({ id: 'prompt_side', schema: promptSideInput })
   .prompt(promptSideQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid side.')
+      return flow.transition(promptSide, props.data)
+    }
+    const { text } = props.message.payload
     const parseResult = liftSideSchema.safeParse(text)
     if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid side.')

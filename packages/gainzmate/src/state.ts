@@ -13,7 +13,10 @@ export const stateRepo: dallox.FlowStateRepository<typeof bot> = {
         name: 'flow',
         type: 'conversation',
         id: props.message.conversationId,
-        payload: state,
+        payload: {
+          next: state.next,
+          data: state.data as Record<string, any>,
+        },
       })
       .then(() => {}),
 }

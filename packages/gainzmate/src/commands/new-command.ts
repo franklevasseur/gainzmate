@@ -1,8 +1,8 @@
+import { z } from '@botpress/sdk'
 import { flow, Flow } from 'src/bot'
 import { Gsheets } from 'src/integrations/gsheets'
 import { Telegram } from 'src/integrations/telegram'
 import yn from 'yn'
-import { z } from 'zod'
 import { formatLift, liftNameSchema, liftSideSchema, liftSchema, parseLift, liftEntity, sideEntity } from '../lift'
 import * as bp from '.botpress'
 
@@ -65,7 +65,11 @@ export const newCommand = flow
 const promptName = flow
   .declareNode({ id: 'prompt_name', schema: promptNameInput })
   .prompt(promptNameQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid lift name.')
+      return flow.transition(promptName, props.data)
+    }
+    const { text } = props.message.payload
     const parseResult = liftNameSchema.safeParse(text)
     if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid lift name.')
@@ -78,7 +82,11 @@ const promptName = flow
 const promptSide = flow
   .declareNode({ id: 'prompt_side', schema: promptSideInput })
   .prompt(promptSideQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid side.')
+      return flow.transition(promptSide, props.data)
+    }
+    const { text } = props.message.payload
     const parseResult = liftSideSchema.safeParse(text)
     if (!parseResult.success) {
       await Telegram.from(props).respondText('Please enter a valid side.')
@@ -91,7 +99,11 @@ const promptSide = flow
 const promptWeight = flow
   .declareNode({ id: 'prompt_weight', schema: promptWeightInput })
   .prompt(promptWeightQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid weight.')
+      return flow.transition(promptWeight, props.data)
+    }
+    const { text } = props.message.payload
     const weight = Number(text)
     if (!text || isNaN(weight)) {
       await Telegram.from(props).respondText('Please enter a valid weight.')
@@ -103,7 +115,11 @@ const promptWeight = flow
 const promptSets = flow
   .declareNode({ id: 'prompt_sets', schema: promptSetsInput })
   .prompt(promptSetsQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid number of sets.')
+      return flow.transition(promptSets, props.data)
+    }
+    const { text } = props.message.payload
     const sets = Number(text)
     if (!text || isNaN(sets)) {
       await Telegram.from(props).respondText('Please enter a valid number of sets.')
@@ -115,7 +131,11 @@ const promptSets = flow
 const promptReps = flow
   .declareNode({ id: 'prompt_reps', schema: promptRepsInput })
   .prompt(promptRepsQuestion, async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter a valid number of reps.')
+      return flow.transition(promptReps, props.data)
+    }
+    const { text } = props.message.payload
     const reps = Number(text)
     if (!text || isNaN(reps)) {
       await Telegram.from(props).respondText('Please enter a valid number of reps.')
@@ -127,7 +147,11 @@ const promptReps = flow
 const confirmLift = flow.declareNode({ id: 'confirmLift', schema: liftSchema }).prompt(
   ({ data }) => choiceMessage(`Confirm lift: "${formatLift(data)}"`, ['yes', 'no']),
   async (props) => {
-    const text = props.message.payload.text as string
+    if (props.message.type !== 'text') {
+      await Telegram.from(props).respondText('Please enter "yes" or "no".')
+      return flow.transition(confirmLift, props.data)
+    }
+    const { text } = props.message.payload
     const confirmed = yn(text)
     if (confirmed) {
       return flow.transition(saveLift, props.data)
