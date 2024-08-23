@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@botpress/cli':
-        specifier: ^0.8.58
-        version: 0.8.58(react@18.3.1)
+        specifier: ^0.8.59
+        version: 0.8.59(react@18.3.1)
       '@types/node':
         specifier: ^18.11.18
         version: 18.11.18
@@ -701,8 +701,8 @@ packages:
       js-yaml: 4.1.0
     dev: true
 
-  /@botpress/cli@0.8.58(react@18.3.1):
-    resolution: {integrity: sha512-IQODSxGuT5uyX1tvI7+eY5TIoDFsd1JrtRgPZFLTKqkD4s3eS45NSgmgl3u2y58yNjGags5SGHOM/i9TTQNHEQ==}
+  /@botpress/cli@0.8.59(react@18.3.1):
+    resolution: {integrity: sha512-HpjCx8A9Uly9pzZTUNPhN/yBnv9UJ98OrC3MCcReMhAeBVmUwD63OMlT3JSkSOHF5kGhLx/UffAMtsaruguY4A==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
