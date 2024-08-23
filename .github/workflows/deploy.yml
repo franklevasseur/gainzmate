@@ -31,4 +31,4 @@ jobs:
       - name: Deploy
         working-directory: ./packages/gainzmate
         run: |
-          pnpm bp deploy --botId ${{ secrets.BP_BOT_ID }} -y
+          pnpm bp deploy --botId ${{ secrets.BP_BOT_ID }} -y --minify false

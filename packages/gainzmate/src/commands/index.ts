@@ -1,6 +1,6 @@
 import { z } from '@botpress/sdk'
-import { flow, FlowNode } from 'src/bot'
-import { Telegram } from 'src/integrations/telegram'
+import { flow, FlowNode } from '../bot'
+import { Telegram } from '../integrations/telegram'
 import { linkCommand } from './link-command'
 import { listCommand } from './list-command'
 import { newCommand } from './new-command'
@@ -17,7 +17,7 @@ const helpCommand = flow.declareNode({ id: 'help_command', schema: commandArgSch
   const help = Object.entries(commands)
     .map(([name, { description }]) => `${name} - ${description}`)
     .join('\n')
-  Telegram.from(props).respondText(help)
+  await Telegram.from(props).respondText(help)
   return null
 })
 
