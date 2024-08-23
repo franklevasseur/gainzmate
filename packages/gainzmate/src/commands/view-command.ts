@@ -1,24 +1,20 @@
-// TODO: re-enable prettier in this file
-
 import { z } from '@botpress/sdk'
 import crypto from 'crypto'
 import * as scat from 'scat'
-import { Flow, flow } from 'src/bot'
-import { Gsheets } from 'src/integrations/gsheets'
-import { Telegram } from 'src/integrations/telegram'
-import { LiftEvent, parseLift, DateTime, liftSchema, liftNameSchema, liftSideSchema, liftNames, liftSides } from 'src/lift'
-import * as resvege from 'src/resvg'
-import * as spaces from 'src/spaces'
-import * as utils from 'src/utils'
-import * as secrets from '.botpress/secrets'
-
-const creds: spaces.SpaceCredentials = {
-  region: secrets.digitaloceanSpaceRegion,
-  name: secrets.digitaloceanSpaceName,
-  accessKey: secrets.digitaloceanSpaceAccessKey,
-  secretKey: secrets.digitaloceanSpaceSecretKey,
-}
-
+import { Flow, flow } from '../bot'
+import { Gsheets } from '../integrations/gsheets'
+import { Telegram } from '../integrations/telegram'
+import {
+  LiftEvent,
+  parseLift,
+  DateTime,
+  liftSchema,
+  liftNameSchema,
+  liftSideSchema,
+  liftNames,
+  liftSides,
+} from '../lift'
+import * as utils from '../utils'
 
 const plotLifts = (lifts: LiftEvent[], title: string) => () => {
   const viewWidth = 800
@@ -28,7 +24,9 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
 
   const dateAxis = lifts.map(({ date }) => date)
   const dateRange = utils.rangeOf(dateAxis.map((date) => date.getTime()))
-  const dateAxisLabels = utils.linspace(dateRange.min, dateRange.max, 10).map((t) => DateTime.fromTime(t).format('DD/MM'))
+  const dateAxisLabels = utils
+    .linspace(dateRange.min, dateRange.max, 10)
+    .map((t) => DateTime.fromTime(t).format('DD/MM'))
   plot.add(
     new scat.PlotAxis({
       direction: 'x',
@@ -73,7 +71,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
       y: 0,
       color: 'black',
       strength: 'weakest',
-    })
+    }),
   )
 
   plot.add(
@@ -82,7 +80,7 @@ const plotLifts = (lifts: LiftEvent[], title: string) => () => {
       y: weightRange.max - weightRange.min,
       color: 'black',
       strength: 'weakest',
-    })
+    }),
   )
 
   const data = lifts.map(
@@ -205,40 +203,31 @@ const renderGraph = flow.declareNode({ id: 'render_graph', schema: viewableLift 
   const baseName = hashSvg(svg)
 
   const svgFileName = `${baseName}.html`
-  const { objectUrl: svgUrl } = await spaces.upload(
-    creds,
-    {
-      content: html,
-      fileName: svgFileName,
-      ACL: 'public-read',
-      contentDisposition: 'inline',
-      contentType: 'text/html',
-    },
-  )
+  const {
+    file: { url: svgUrl },
+  } = await props.client.uploadFile({
+    key: svgFileName,
+    content: html,
+    contentType: 'text/html',
+    accessPolicies: ['public_content'],
+  })
 
   await Telegram.from(props).respond('markdown', {
     markdown: `See SVG ${title} [here](${svgUrl})\\.`,
   })
 
-  await Telegram.from(props).respondText('PNG rendering is disabled for now.')
+  const {
+    output: { imageUrl },
+  } = await props.client.callAction({
+    type: 'browser:captureScreenshot',
+    input: {
+      url: svgUrl,
+    },
+  })
 
-  // const png = await resvege.render(svg)
-  // const pngFileName = `${baseName}.png`
-  // const { objectUrl: pngUrl } = await spaces.upload(
-  //   creds,
-  //   {
-  //     content: png,
-  //     fileName: pngFileName,
-  //     ACL: 'public-read',
-  //     contentDisposition: 'inline',
-  //     contentType: 'image/png',
-  //   },
-  // )
-
-  // await Telegram.from(props).respondText(`See PNG ${title} below:`)
-  // await Telegram.from(props).respond('image', {
-  //   imageUrl: pngUrl,
-  // })
+  await Telegram.from(props).respond('image', {
+    imageUrl,
+  })
 
   return null
 })

@@ -53,10 +53,16 @@ const gsheets = new bp.gsheets.Gsheets({
   },
 })
 
+const browser = new bp.browser.Browser({
+  enabled: true,
+  config: {},
+})
+
 export const bot = new bp.Bot({
   integrations: {
     telegram,
     gsheets,
+    browser,
   },
   states: {
     flow: {
