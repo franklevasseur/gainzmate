@@ -26,22 +26,6 @@ inputs:
     type: string
     required: true
 
-  digitalocean_space_region:
-    type: string
-    required: true
-
-  digitalocean_space_name:
-    type: string
-    required: true
-
-  digitalocean_space_access_key:
-    type: string
-    required: true
-
-  digitalocean_space_secret_key:
-    type: string
-    required: true
-
 runs:
   using: 'composite'
   steps:
@@ -72,8 +56,4 @@ runs:
         GSHEETS_SPREADSHEET_ID: ${{ inputs.gsheets_spreadsheet_id }}
         GSHEETS_CLIENT_EMAIL: ${{ inputs.gsheets_client_email }}
         GSHEETS_PRIVATE_KEY: ${{ inputs.gsheets_private_key }}
-        DIGITALOCEAN_SPACE_REGION: ${{ inputs.digitalocean_space_region }}
-        DIGITALOCEAN_SPACE_NAME: ${{ inputs.digitalocean_space_name }}
-        DIGITALOCEAN_SPACE_ACCESS_KEY: ${{ inputs.digitalocean_space_access_key }}
-        DIGITALOCEAN_SPACE_SECRET_KEY: ${{ inputs.digitalocean_space_secret_key }}
       run: pnpm gen:secrets

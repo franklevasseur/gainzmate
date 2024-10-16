@@ -1,6 +1,7 @@
 {
   "name": "gainzville",
   "scripts": {
+    "build": "pnpm -F gainzmate build",
     "type:check": "pnpm -r --stream type:check",
     "format:check": "prettier --version && prettier --check .",
     "format:fix": "prettier --version && prettier --write .",
@@ -15,7 +16,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@botpress/cli": "^0.8.59",
+    "@botpress/cli": "1.0.0",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",

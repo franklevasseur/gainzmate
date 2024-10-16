@@ -5,5 +5,5 @@
     "outDir": "dist"
   },
   "include": [".botpress/**/*", "src/**/*", "secrets/**/*.ts", "./*.ts", "./*.json"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules/**", "bp_modules/**"]
 }
