@@ -17,6 +17,8 @@ jobs:
           gsheets_spreadsheet_id: ${{ secrets.GSHEETS_SPREADSHEET_ID }}
           gsheets_client_email: ${{ secrets.GSHEETS_CLIENT_EMAIL }}
           gsheets_private_key: ${{ secrets.GSHEETS_PRIVATE_KEY }}
+      - name: Build
+        run: pnpm build
       - name: Format Check
         run: pnpm format:check
       - name: Lint Check
