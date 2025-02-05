@@ -1,4 +1,4 @@
-import { z } from '@botpress/sdk'
+import { Bot, z } from '@botpress/sdk'
 import * as err from './errors'
 import { Node } from './node'
 import * as types from './types'
@@ -6,7 +6,7 @@ import * as types from './types'
 const emptySchema = z.object({})
 type ZodEmptySchema = typeof emptySchema
 
-export class Flow<TBot extends types.AnyBot> {
+export class Flow<TBot extends types.BaseBot> {
   private _startNode: Node<TBot, ZodEmptySchema, any> | null = null
   private _nodes: types.NodeMap<TBot> = {}
 
@@ -18,7 +18,7 @@ export class Flow<TBot extends types.AnyBot> {
   }
 
   public constructor(
-    _bot: TBot,
+    _bot: Bot<TBot>,
     private _stateRepo: types.FlowStateRepository<TBot>,
   ) {}
 

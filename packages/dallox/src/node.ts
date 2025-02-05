@@ -1,16 +1,17 @@
-import { z, Bot } from '@botpress/sdk'
+import * as client from '@botpress/client'
+import { z } from '@botpress/sdk'
 import * as err from './errors'
 import * as types from './types'
 
-type StaticQuestion = Pick<types.CreateMessageProps<Bot>, 'type' | 'payload'>
-type VariableQuestion<TInput extends z.AnyZodObject> = (props: types.NodeInput<Bot, TInput>) => StaticQuestion
+type StaticQuestion = Pick<client.ClientInputs['createMessage'], 'type' | 'payload'>
+type VariableQuestion<TInput extends z.AnyZodObject> = (props: types.NodeInput<types.BaseBot, TInput>) => StaticQuestion
 type Question<TInput extends z.AnyZodObject> = StaticQuestion | VariableQuestion<TInput>
 
 const isVariableQuestion = <TInput extends z.AnyZodObject>(
   question: Question<TInput>,
 ): question is VariableQuestion<TInput> => typeof question === 'function'
 
-export class Node<TBot extends types.AnyBot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
+export class Node<TBot extends types.BaseBot, TInput extends z.AnyZodObject, TNext extends types.AnyNode<TBot>> {
   public constructor(
     public readonly id: string,
     public readonly input: TInput,
@@ -32,12 +33,13 @@ export class Node<TBot extends types.AnyBot, TInput extends z.AnyZodObject, TNex
     this.handler = async (args) => {
       let staticQuestion: StaticQuestion
       if (isVariableQuestion(question)) {
-        staticQuestion = question(args)
+        staticQuestion = question(args as types.NodeInput<any, TInput>)
       } else {
         staticQuestion = question
       }
 
-      await args.client.createMessage({
+      const client = args.client as types.Client<any>
+      await client.createMessage({
         conversationId: args.message.conversationId,
         userId: args.ctx.botId,
         tags: {},

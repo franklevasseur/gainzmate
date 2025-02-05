@@ -1,32 +1,46 @@
-import { z, Bot } from '@botpress/sdk'
+import { z } from '@botpress/sdk'
+import * as sdk from '@botpress/sdk'
 import { Node } from './node'
 
-export type AnyBot = Bot<any>
+export type BaseBot = sdk.DefaultBot<{}>
 
-export type MessageHandler<TBot extends AnyBot> = Parameters<TBot['message']>[0]
-export type MessageHandlerProps<TBot extends AnyBot> = Parameters<MessageHandler<TBot>>[0]
-export type Client<TBot extends AnyBot> = MessageHandlerProps<TBot>['client']
-export type CreateMessageProps<TBot extends AnyBot> = Parameters<Client<TBot>['createMessage']>[0]
+export type BotHandlers<TBot extends BaseBot = BaseBot> = sdk.BotHandlers<TBot>
 
-export type NodeDeclaration<_TBot extends AnyBot, TInput extends z.AnyZodObject> = {
+export type EventHandlers<TBot extends BaseBot = BaseBot> = Required<{
+  [K in keyof BotHandlers<TBot>['eventHandlers']]: NonNullable<BotHandlers<TBot>['eventHandlers'][K]>[number]
+}>
+
+export type MessageHandlers<TBot extends BaseBot = BaseBot> = Required<{
+  [K in keyof BotHandlers<TBot>['messageHandlers']]: NonNullable<BotHandlers<TBot>['messageHandlers'][K]>[number]
+}>
+
+export type MessageHandler<TBot extends BaseBot = BaseBot> = MessageHandlers<TBot>['*']
+export type MessageHandlerProps<TBot extends BaseBot = BaseBot> = Parameters<MessageHandler<TBot>>[0]
+
+export type EventHandler<TBot extends BaseBot = BaseBot> = EventHandlers<TBot>['*']
+export type EventHandlerProps<TBot extends BaseBot = BaseBot> = Parameters<EventHandler<TBot>>[0]
+
+export type Client<TBot extends BaseBot = BaseBot> = (MessageHandlerProps<TBot> | EventHandlerProps<TBot>)['client']
+
+export type NodeDeclaration<_TBot extends BaseBot, TInput extends z.AnyZodObject> = {
   id: string
   schema: TInput
 }
 
-export type NodeInput<TBot extends AnyBot, TInput extends z.AnyZodObject> = MessageHandlerProps<TBot> & {
+export type NodeInput<TBot extends BaseBot, TInput extends z.AnyZodObject> = MessageHandlerProps<TBot> & {
   data: z.infer<TInput>
 }
 
 export type TransitionType = 'hold' | 'yield'
-export type FlowTransition<TBot extends AnyBot, TNext extends Node<TBot, any, any>> = {
+export type FlowTransition<TBot extends BaseBot, TNext extends Node<TBot, any, any>> = {
   action: TransitionType
   next: TNext
   data: z.infer<TNext['input']>
 }
 
-export type NodeOutput<TBot extends AnyBot, TNext extends Node<TBot, any, any>> = FlowTransition<TBot, TNext> | null
+export type NodeOutput<TBot extends BaseBot, TNext extends Node<TBot, any, any>> = FlowTransition<TBot, TNext> | null
 
-export type NodeHandler<TBot extends AnyBot, TInput extends z.AnyZodObject, TNext extends Node<TBot, any, any>> = (
+export type NodeHandler<TBot extends BaseBot, TInput extends z.AnyZodObject, TNext extends Node<TBot, any, any>> = (
   props: NodeInput<TBot, TInput>,
 ) => Promise<NodeOutput<TBot, TNext>>
 
@@ -35,10 +49,10 @@ export type FlowState = {
   data: object
 }
 
-export type FlowStateRepository<TBot extends AnyBot> = {
+export type FlowStateRepository<TBot extends BaseBot = BaseBot> = {
   get: (props: MessageHandlerProps<TBot>) => Promise<FlowState | null>
   set: (props: MessageHandlerProps<TBot>, state: FlowState) => Promise<void>
 }
 
-export type AnyNode<TBot extends AnyBot> = Node<TBot, any, any>
-export type NodeMap<TBot extends AnyBot> = Record<string, AnyNode<TBot>>
+export type AnyNode<TBot extends BaseBot = BaseBot> = Node<TBot, any, any>
+export type NodeMap<TBot extends BaseBot = BaseBot> = Record<string, AnyNode<TBot>>

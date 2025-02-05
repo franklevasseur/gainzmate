@@ -1,8 +1,9 @@
+import { Bot } from '@botpress/sdk'
 import { Flow } from './flow'
-import { AnyBot, FlowStateRepository } from './types'
+import { BaseBot, FlowStateRepository } from './types'
 
 export * as err from './errors'
 export { FlowState, FlowStateRepository } from './types'
 
-export const createFlow = <TBot extends AnyBot>(bot: TBot, stateRepo: FlowStateRepository<TBot>) =>
+export const createFlow = <TBot extends BaseBot>(bot: Bot<TBot>, stateRepo: FlowStateRepository<TBot>) =>
   new Flow(bot, stateRepo)

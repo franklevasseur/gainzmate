@@ -3,7 +3,7 @@ import { entry } from './commands'
 
 flow.start(async () => flow.transition(entry, {}))
 
-bot.message(async (props) => {
+bot.on.message('*', async (props) => {
   console.info('[START] process_message', props.message)
 
   if (props.message.type === 'text' && props.message.payload.text === '/reset') {

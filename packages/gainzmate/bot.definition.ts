@@ -1,9 +1,8 @@
 import * as sdk from '@botpress/sdk'
+import browser from 'bp_modules/browser'
 import gsheets from 'bp_modules/gsheets'
 import telegram from 'bp_modules/telegram'
 import * as genenv from '.genenv'
-
-const { default: browser } = require('bp_modules/browser') // TODO: fix type checking
 
 export default new sdk.BotDefinition({
   states: {
@@ -16,11 +15,11 @@ export default new sdk.BotDefinition({
     },
   },
 })
-  .add(browser, {
+  .addIntegration(browser, {
     enabled: true,
     configuration: {},
   })
-  .add(gsheets, {
+  .addIntegration(gsheets, {
     enabled: true,
     configuration: {
       clientEmail: genenv.GSHEETS_CLIENT_EMAIL,
@@ -28,7 +27,7 @@ export default new sdk.BotDefinition({
       spreadsheetId: genenv.GSHEETS_SPREADSHEET_ID,
     },
   })
-  .add(telegram, {
+  .addIntegration(telegram, {
     enabled: true,
     configuration: {
       botToken: genenv.TELEGRAM_BOT_TOKEN,

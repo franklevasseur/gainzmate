@@ -1,19 +1,19 @@
 {
   "name": "gainzmate",
   "scripts": {
-    "type:check": "tsc --noEmit",
-    "test": "vitest run",
-    "add:integrations": "bp add telegram@0.4.5 -y && bp add gsheets@0.3.3 -y && bp add browser@0.0.2 -y",
+    "check:type": "tsc --noEmit",
+    "add:integrations": "bp add -y",
     "gen:secrets": "genenv -o ./.genenv/index.ts -e TELEGRAM_BOT_TOKEN -e GSHEETS_SPREADSHEET_ID -e GSHEETS_CLIENT_EMAIL -e GSHEETS_PRIVATE_KEY",
-    "build": "pnpm gen:secrets && bp build"
+    "build": "pnpm add:integrations && pnpm gen:secrets && bp build",
+    "start": "pnpm bp dev -y"
   },
   "keywords": [],
   "private": true,
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.456.0",
-    "@botpress/sdk": "1.0.0",
+    "@botpress/client": "0.41.2",
+    "@botpress/sdk": "3.0.2",
     "@bpinternal/entities": "^0.0.4",
     "@microsoft/recognizers-text-number-with-unit": "^1.3.1",
     "@resvg/resvg-wasm": "^2.6.0",
@@ -29,5 +29,10 @@
     "@bpinternal/yargs-extra": "^0.0.5",
     "dotenv": "^16.4.5",
     "vitest": "^0.34.6"
+  },
+  "bpDependencies": {
+    "telegram": "telegram@0.4.5",
+    "gsheets": "gsheets@0.3.3",
+    "browser": "browser@0.3.0"
   }
 }
