@@ -11,3 +11,4 @@ __snapshots__
 bp_modules
 .genenv
 .turbo
+.botpresshome.*
