@@ -1,7 +1,7 @@
 import { z, Bot } from '@botpress/sdk'
 import { Node } from './node'
 
-export type AnyBot = Bot<any, any, any>
+export type AnyBot = Bot<any>
 
 export type MessageHandler<TBot extends AnyBot> = Parameters<TBot['message']>[0]
 export type MessageHandlerProps<TBot extends AnyBot> = Parameters<MessageHandler<TBot>>[0]

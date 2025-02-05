@@ -17,4 +17,5 @@ pnpm-lock.yaml
 gen
 dist
 .botpress
-
+bp_modules
+.genenv

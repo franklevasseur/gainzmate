@@ -11,6 +11,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@botpress/sdk": "^0.10.9"
+    "@botpress/sdk": "1.0.0"
   }
 }

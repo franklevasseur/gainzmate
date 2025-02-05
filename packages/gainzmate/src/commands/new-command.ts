@@ -6,7 +6,7 @@ import yn from 'yn'
 import { formatLift, liftNameSchema, liftSideSchema, liftSchema, parseLift, liftEntity, sideEntity } from '../lift'
 import * as bp from '.botpress'
 
-type _Messages = bp.telegram.channels.channel.Messages
+type _Messages = bp.integrations.telegram.channels.channel.Messages
 type Messages = {
   [T in keyof _Messages]: {
     type: T

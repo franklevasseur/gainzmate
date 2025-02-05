@@ -2,7 +2,7 @@ import { MessageHandlerProps } from '../bot'
 import * as bot from '../bot'
 import * as bp from '.botpress'
 
-export type Messages = bp.telegram.channels.channel.Messages
+export type Messages = bp.integrations.telegram.channels.channel.Messages
 
 export class Telegram {
   private constructor(private readonly props: MessageHandlerProps) {}

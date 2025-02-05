@@ -9,7 +9,7 @@ module.exports = {
   },
   extends: ['prettier'],
   parser: '@typescript-eslint/parser',
-  ignorePatterns: ['*.d.ts', '*.test.ts', '*.js', 'cdk.out/', 'dist/', 'node_modules/'],
+  ignorePatterns: ['*.d.ts', '*.test.ts', '*.js', 'cdk.out/', 'dist/', 'node_modules/', 'bp_modules/'],
   plugins: [
     'eslint-plugin-import',
     '@typescript-eslint',

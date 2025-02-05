@@ -8,3 +8,6 @@ __snapshots__
 .ignore.me.*
 .env
 .botpress
+bp_modules
+.genenv
+.turbo
