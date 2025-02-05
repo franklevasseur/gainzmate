@@ -20,10 +20,10 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Format Check
-        run: pnpm format:check
+        run: pnpm check:format
       - name: Lint Check
-        run: pnpm lint:check
+        run: pnpm check:lint
       - name: Type Check
-        run: pnpm type:check
+        run: pnpm check:type
       - name: Test
         run: pnpm test

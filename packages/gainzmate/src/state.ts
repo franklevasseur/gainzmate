@@ -1,7 +1,7 @@
 import * as dallox from 'dallox'
-import { bot } from 'src/bot'
+import { TBot } from 'src/bot'
 
-export const stateRepo: dallox.FlowStateRepository<typeof bot> = {
+export const stateRepo: dallox.FlowStateRepository<TBot> = {
   get: async (props) =>
     props.client
       .getState({ name: 'flow', type: 'conversation', id: props.message.conversationId })
@@ -15,7 +15,7 @@ export const stateRepo: dallox.FlowStateRepository<typeof bot> = {
         id: props.message.conversationId,
         payload: {
           next: state.next,
-          data: state.data as Record<string, any>,
+          data: state.data,
         },
       })
       .then(() => {}),
